@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agente de Devoluções — CD</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F5F4F0;
+    --surface: #FFFFFF;
+    --border: #E2E0D8;
+    --border-strong: #C8C5BB;
+    --text: #1A1916;
+    --text-muted: #6B6860;
+    --text-hint: #A8A59E;
+    --accent: #1A4D3A;
+    --accent-light: #E8F2ED;
+    --accent-text: #1A4D3A;
+    --warn: #7A4210;
+    --warn-bg: #FDF3E8;
+    --danger: #8B1A1A;
+    --danger-bg: #FDF0F0;
+    --success: #1A4D3A;
+    --success-bg: #E8F2ED;
+    --radius: 10px;
+    --radius-sm: 6px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    font-size: 14px;
+    min-height: 100vh;
+  }
+  .app {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 2rem 1.5rem;
+  }
+  .app-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+  }
+  .app-title {
+    font-size: 18px;
+    font-weight: 500;
+    letter-spacing: -0.02em;
+  }
+  .app-sub {
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-top: 2px;
+  }
+  .logo-mark {
+    width: 38px; height: 38px;
+    background: var(--accent);
+    border-radius: var(--radius-sm);
+    display: flex; align-items: center; justify-content: center;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 500;
+    font-family: 'DM Mono', monospace;
+    letter-spacing: -1px;
+  }
+
+  /* TABS */
+  .tabs {
+    display: flex;
+    gap: 2px;
+    background: var(--border);
+    border-radius: var(--radius);
+    padding: 3px;
+    margin-bottom: 1.5rem;
+    width: fit-content;
+  }
+  .tab {
+    padding: 7px 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    background: transparent;
+    color: var(--text-muted);
+    font-weight: 400;
+    transition: all .15s;
+  }
+  .tab.on { background: var(--surface); color: var(--text); font-weight: 500; }
+  .panel { display: none; }
+  .panel.on { display: block; }
+
+  /* CARDS */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .card-title {
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    margin-bottom: 1.25rem;
+  }
+
+  /* FORM */
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  .field { display: flex; flex-direction: column; gap: 5px; }
+  .field label { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+  .field input, .field select, .field textarea {
+    height: 38px;
+    padding: 0 12px;
+    font-size: 14px;
+    font-family: 'DM Sans', sans-serif;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg);
+    color: var(--text);
+    outline: none;
+    transition: border-color .15s;
+  }
+  .field input:focus, .field select:focus, .field textarea:focus {
+    border-color: var(--accent);
+    background: var(--surface);
+  }
+  .field input[readonly] {
+    background: var(--border);
+    color: var(--text-muted);
+    cursor: default;
+  }
+  .field textarea { height: auto; padding: 10px 12px; resize: none; }
+  .field-full { margin-bottom: 14px; }
+
+  /* BUTTONS */
+  .btn {
+    height: 38px;
+    padding: 0 18px;
+    font-size: 13px;
+    font-family: 'DM Sans', sans-serif;
+    font-weight: 500;
+    border: 1px solid var(--border-strong);
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    background: var(--surface);
+    color: var(--text);
+    transition: all .15s;
+  }
+  .btn:hover { background: var(--bg); }
+  .btn-primary {
+    background: var(--accent);
+    color: #fff;
+    border-color: var(--accent);
+  }
+  .btn-primary:hover { opacity: .88; }
+  .btn-send {
+    background: #fff;
+    border: 1.5px solid var(--accent);
+    color: var(--accent);
+    width: 100%;
+    height: 42px;
+    font-size: 14px;
+    margin-top: 4px;
+  }
+  .btn-send:hover { background: var(--accent-light); }
+  .btn-sm { height: 30px; padding: 0 12px; font-size: 12px; }
+
+  /* ALERTS */
+  .alert {
+    border-radius: var(--radius-sm);
+    padding: 10px 14px;
+    font-size: 13px;
+    margin-top: 10px;
+    display: none;
+    line-height: 1.6;
+  }
+  .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid #B8D9C8; }
+  .alert-danger  { background: var(--danger-bg);  color: var(--danger);  border: 1px solid #F0C0C0; }
+  .alert-warn    { background: var(--warn-bg);    color: var(--warn);    border: 1px solid #F0D0A0; }
+
+  /* EMAIL PREVIEW */
+  .email-preview {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    margin-top: 1rem;
+    display: none;
+  }
+  .email-header {
+    background: var(--bg);
+    padding: 14px 16px;
+    border-bottom: 1px solid var(--border);
+  }
+  .email-row {
+    display: flex; gap: 8px; margin-bottom: 5px; font-size: 13px;
+  }
+  .email-row:last-child { margin-bottom: 0; }
+  .email-lbl { color: var(--text-hint); min-width: 56px; font-size: 12px; }
+  .email-val { color: var(--text); }
+  .email-body {
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.85;
+    color: var(--text);
+    white-space: pre-wrap;
+    font-family: 'DM Sans', sans-serif;
+  }
+
+  /* TABLE */
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th {
+    text-align: left;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: .06em;
+    padding: 7px 10px;
+    border-bottom: 1px solid var(--border);
+  }
+  .tbl td {
+    padding: 9px 10px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+  }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tbody tr:hover td { background: var(--bg); }
+  .tbl-empty { text-align: center; color: var(--text-hint); padding: 1.5rem !important; }
+
+  /* BADGE */
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 500;
+    padding: 3px 8px;
+    border-radius: 4px;
+  }
+  .badge-ok   { background: var(--success-bg); color: var(--success); }
+  .badge-pend { background: #EEF2FF; color: #3730A3; }
+  .badge-neu  { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
+
+  .sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+
+  .hint { font-size: 12px; color: var(--text-hint); margin-top: 5px; }
+  .nota-display {
+    font-family: 'DM Mono', monospace;
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--accent);
+    letter-spacing: .05em;
+  }
+  .info-row {
+    display: flex; gap: 6px; align-items: baseline; margin-bottom: 6px;
+  }
+  .info-label { font-size: 11px; color: var(--text-hint); min-width: 64px; }
+  .info-val { font-size: 14px; color: var(--text); font-weight: 500; }
+
+  @media (max-width: 600px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .app { padding: 1rem; }
+  }
+</style>
+</head>
+<body>
+<div class="app">
+
+  <div class="app-header">
+    <div>
+      <div class="app-title">Devoluções CD</div>
+      <div class="app-sub">Registro e notificação de notas devolvidas &nbsp;<span id="sheet-status" style="font-size:11px;padding:2px 8px;border-radius:4px;background:#E8F2ED;color:#1A4D3A">conectando...</span></div>
+    </div>
+    <div class="logo-mark">CD</div>
+  </div>
+
+  <div class="tabs">
+    <button class="tab on" onclick="goTab('registrar', this)">Registrar devolução</button>
+    <button class="tab" onclick="goTab('historico', this)">Histórico</button>
+  </div>
+
+  <!-- ===== REGISTRAR ===== -->
+  <div id="p-registrar" class="panel on">
+    <div class="card">
+      <div class="card-title">dados da devolução</div>
+
+      <div class="grid3">
+        <div class="field">
+          <label>Nº do pedido</label>
+          <input type="text" id="r-pedido" placeholder="Ex: 13229493" oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Nº da NF</label>
+          <input type="text" id="r-nota" placeholder="Ex: 472906" oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
+        </div>
+        <div class="field">
+          <label>Data de chegada ao CD</label>
+          <input type="date" id="r-data">
+        </div>
+      </div>
+      <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="_buscar()">Buscar na planilha</button>
+      <div id="r-loading" class="alert alert-warn" style="display:none">Buscando na planilha...</div>
+
+      <div id="r-found" class="alert alert-success"></div>
+      <div id="r-nfound" class="alert alert-danger">Pedido/NF não encontrado na planilha. Verifique o número digitado.</div>
+
+      <div id="r-extra" style="display:none">
+        <div class="sep"></div>
+        <div class="grid3">
+          <div class="field">
+            <label>Cliente</label>
+            <input type="text" id="r-cli" readonly>
+          </div>
+          <div class="field">
+            <label>Vendedor</label>
+            <input type="text" id="r-vend" readonly>
+          </div>
+          <div class="field">
+            <label>Supervisor</label>
+            <input type="text" id="r-sup" readonly>
+          </div>
+        </div>
+
+        <div class="field-full">
+          <div class="field">
+            <label>Motivo da devolução</label>
+            <input type="text" id="r-motivo" placeholder="Descreva o motivo da devolução">
+          </div>
+        </div>
+
+        <div class="field-full">
+          <div class="field">
+            <label>Observação adicional (opcional)</label>
+            <input type="text" id="r-obs" placeholder="Ex: produto aguarda vistoria, caixa lacrada...">
+          </div>
+        </div>
+
+        <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="gerarEAbrir()">Enviar e-mail ao vendedor e supervisor</button>
+      </div>
+    </div>
+
+
+  </div>
+
+  <!-- ===== HISTÓRICO ===== -->
+  <div id="p-historico" class="panel">
+    <div class="card">
+      <div class="card-title">devoluções registradas nesta sessão</div>
+      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1rem">
+        <div class="field" style="flex:1;margin-bottom:0">
+          <label>Enviar relatório para</label>
+          <input type="email" id="rel-dest" value="cadastro@acripel.com.br" placeholder="email@empresa.com.br">
+        </div>
+        <button class="btn btn-primary" style="height:38px;white-space:nowrap" onclick="enviarRelatorio()">Enviar relatório semanal</button>
+      </div>
+      <table class="tbl">
+        <thead><tr><th>Pedido</th><th>NF</th><th>Cliente</th><th>Vendedor</th><th>Supervisor</th><th>Motivo</th><th>Data</th></tr></thead>
+        <tbody id="hist-tbody"></tbody>
+      </table>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+const SHEET_URL = "https://script.google.com/macros/s/AKfycbxoUCy8Ovq1Fo8ESVzK7gTqsaF7q2pnJzlQDVwXyf_rG9aGSnyhodUgkhLtofXGnm_x/exec";
+
+let dadosSheet = [];
+let historico = [];
+let buscaTimeout = null;
+
+// Carrega planilha ao iniciar
+async function carregarPlanilha() {
+  const status = document.getElementById('sheet-status');
+  try {
+    const resp = await fetch(SHEET_URL);
+    if (!resp.ok) throw new Error('Erro ao buscar planilha');
+    const rows = await resp.json();
+    dadosSheet = [];
+    for (let i = 1; i < rows.length; i++) {
+      const r = rows[i];
+      if (!r[0] && !r[1]) continue;
+      dadosSheet.push({
+        pedido:     String(r[0] || '').trim(),
+        nf:         String(r[1] || '').trim(),
+        cliente:    String(r[2] || '').trim(),
+        vendedor:   String(r[3] || '').trim(),
+        supervisor: String(r[4] || '').trim(),
+        emailVend:  String(r[5] || '').trim(),
+        emailSup:   String(r[6] || '').trim()
+      });
+    }
+    status.textContent = dadosSheet.length + ' registros carregados';
+    status.style.background = '#E8F2ED';
+    status.style.color = '#1A4D3A';
+  } catch(e) {
+    status.textContent = 'erro ao conectar planilha';
+    status.style.background = '#FDF0F0';
+    status.style.color = '#8B1A1A';
+  }
+}
+
+// Tabs
+function goTab(name, el) {
+  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('p-' + name).classList.add('on');
+  if (name === 'historico') renderHist();
+}
+
+// Busca nota com debounce
+function buscarNota() {
+  clearTimeout(buscaTimeout);
+  buscaTimeout = setTimeout(_buscar, 300);
+}
+
+function _buscar() {
+  const pedido  = document.getElementById('r-pedido').value.trim();
+  const nf      = document.getElementById('r-nota').value.trim();
+  const found   = document.getElementById('r-found');
+  const nfound  = document.getElementById('r-nfound');
+  const extra   = document.getElementById('r-extra');
+  const loading = document.getElementById('r-loading');
+
+  found.style.display  = 'none';
+  nfound.style.display = 'none';
+  extra.style.display  = 'none';
+
+  if (!pedido && !nf) return;
+
+  if (!dadosSheet.length) {
+    loading.style.display = 'block';
+    loading.textContent = 'Carregando planilha, aguarde...';
+    carregarPlanilha().then(_buscar);
+    return;
+  }
+  loading.style.display = 'none';
+
+  const norm = s => String(s || '').trim().replace(/\.0$/, '').replace(/\.00$/, '');
+  const registro = dadosSheet.find(r =>
+    (pedido && norm(r.pedido) === norm(pedido)) ||
+    (nf     && norm(r.nf)     === norm(nf))
+  );
+
+  if (registro) {
+    found.style.display = 'block';
+    found.innerHTML = `<strong>Registro encontrado</strong> — Pedido: ${norm(registro.pedido)} | NF: ${norm(registro.nf)} | Cliente: ${registro.cliente}`;
+    document.getElementById('r-pedido').value = norm(registro.pedido);
+    document.getElementById('r-nota').value   = norm(registro.nf);
+    document.getElementById('r-cli').value    = registro.cliente;
+    document.getElementById('r-vend').value   = registro.vendedor;
+    document.getElementById('r-sup').value    = registro.supervisor;
+    extra.style.display  = 'block';
+    extra._registro      = registro;
+  } else {
+    nfound.style.display = 'block';
+  }
+}
+
+// Gera e abre e-mail
+function gerarEAbrir() {
+  const extra = document.getElementById('r-extra');
+  const registro = extra._registro;
+  if (!registro) return;
+
+  const motivo = document.getElementById('r-motivo').value.trim();
+  if (!motivo) { alert('Informe o motivo da devolução.'); return; }
+
+  const data   = document.getElementById('r-data').value;
+  const obs    = document.getElementById('r-obs').value.trim();
+  const dest   = registro.emailVend;
+  const cc     = registro.emailSup;
+
+  if (!dest) { alert('E-mail do vendedor não encontrado na planilha.'); return; }
+
+  const nome1  = registro.vendedor.split(' ')[0];
+  const dataFmt = data
+    ? new Date(data + 'T12:00').toLocaleDateString('pt-BR')
+    : new Date().toLocaleDateString('pt-BR');
+
+  const assunto = `Devolução recebida no CD — Pedido ${registro.pedido} / NF ${registro.nf} / ${registro.cliente}`;
+
+  const corpo =
+`Olá, ${nome1}!
+
+Informamos que a nota fiscal Nº ${registro.nf} referente ao Pedido ${registro.pedido}, cliente ${registro.cliente}, chegou ao nosso Centro de Distribuição em ${dataFmt}.
+
+Motivo da devolução: ${motivo}.
+${obs ? '\nObservação: ' + obs + '\n' : ''}
+A nota está aguardando lançamento no sistema.
+
+Em caso de dúvidas, entre em contato com a equipe do CD.
+
+Atenciosamente,
+Equipe CD / Logística`;
+
+  let link = `mailto:${encodeURIComponent(dest)}`;
+  const params = [`subject=${encodeURIComponent(assunto)}`, `body=${encodeURIComponent(corpo)}`];
+  if (cc) params.push(`cc=${encodeURIComponent(cc)}`);
+  link += '?' + params.join('&');
+  window.location.href = link;
+
+  historico.push({
+    pedido: registro.pedido,
+    nf: registro.nf,
+    cliente: registro.cliente,
+    vendedor: registro.vendedor,
+    supervisor: registro.supervisor,
+    motivo,
+    data: dataFmt
+  });
+  renderHist();
+}
+
+// Histórico
+function renderHist() {
+  const tbody = document.getElementById('hist-tbody');
+  if (!historico.length) {
+    tbody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Nenhum registro ainda</td></tr>';
+    return;
+  }
+  tbody.innerHTML = [...historico].reverse().map(h =>
+    `<tr>
+      <td><span style="font-family:'DM Mono',monospace">${h.pedido}</span></td>
+      <td><span style="font-family:'DM Mono',monospace">${h.nf}</span></td>
+      <td>${h.cliente}</td>
+      <td>${h.vendedor}</td>
+      <td>${h.supervisor}</td>
+      <td>${h.motivo}</td>
+      <td>${h.data}</td>
+    </tr>`
+  ).join('');
+}
+
+// Relatório semanal
+function enviarRelatorio() {
+  if (!historico.length) {
+    alert('Nenhuma devolução registrada nesta sessão para enviar.');
+    return;
+  }
+
+  const hoje = new Date().toLocaleDateString('pt-BR');
+  const assunto = `Relatório semanal de devoluções — ${hoje}`;
+
+  const linhas = historico.map((h, i) =>
+    `${i+1}. Pedido: ${h.pedido} | NF: ${h.nf} | Cliente: ${h.cliente} | Vendedor: ${h.vendedor} | Supervisor: ${h.supervisor} | Motivo: ${h.motivo} | Data: ${h.data}`
+  ).join('\n');
+
+  const corpo =
+`Prezados,
+
+Segue abaixo o relatório de notas fiscais recebidas para devolução no CD:
+
+${linhas}
+
+Total de notas: ${historico.length}
+
+Atenciosamente,
+Equipe CD / Logística`;
+
+  const dest = document.getElementById('rel-dest').value.trim() || 'cadastro@acripel.com.br';
+  const link = `mailto:${encodeURIComponent(dest)}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+  window.location.href = link;
+}
+
+// Init
+document.getElementById('r-data').value = new Date().toISOString().split('T')[0];
+carregarPlanilha();
+renderHist();
+</script>
+</body>
+</html>
