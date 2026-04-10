@@ -34,13 +34,10 @@
     --blue-bg:     rgba(59,130,246,.12);
     --radius:      12px;
     --radius-sm:   8px;
-    --radius-xs:   5px;
     --shadow:      0 4px 24px rgba(0,0,0,.45);
     --shadow-sm:   0 2px 8px rgba(0,0,0,.3);
   }
-
   * { box-sizing: border-box; margin: 0; padding: 0; }
-
   body {
     font-family: 'Inter', sans-serif;
     background: var(--bg);
@@ -49,520 +46,323 @@
     min-height: 100vh;
     overflow-x: hidden;
   }
-
-  /* BG ambient glow */
   body::before {
     content: '';
-    position: fixed;
-    top: -20%;
-    left: -10%;
-    width: 60%;
-    height: 60%;
+    position: fixed; top: -20%; left: -10%; width: 60%; height: 60%;
     background: radial-gradient(ellipse, rgba(99,102,241,.07) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
   body::after {
     content: '';
-    position: fixed;
-    bottom: -20%;
-    right: -10%;
-    width: 50%;
-    height: 50%;
+    position: fixed; bottom: -20%; right: -10%; width: 50%; height: 50%;
     background: radial-gradient(ellipse, rgba(168,85,247,.06) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
+  .app { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem 4rem; position: relative; z-index: 1; }
 
-  .app {
-    max-width: 920px;
-    margin: 0 auto;
-    padding: 2rem 1.5rem 4rem;
-    position: relative;
-    z-index: 1;
-  }
-
-  /* ─── HEADER ─── */
+  /* HEADER */
   .app-header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 2.5rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border);
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
   }
-
   .header-left { display: flex; align-items: center; gap: 14px; }
-
+  /* LOGO / CD FILTER BUTTON */
+  .logo-wrap { position: relative; flex-shrink: 0; }
   .logo-mark {
     width: 44px; height: 44px;
     background: linear-gradient(135deg, var(--accent), var(--purple));
     border-radius: var(--radius-sm);
     display: flex; align-items: center; justify-content: center;
-    color: #fff;
-    font-size: 15px;
-    font-weight: 700;
+    color: #fff; font-size: 15px; font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
     box-shadow: 0 0 20px rgba(99,102,241,.4);
-    flex-shrink: 0;
+    border: none; cursor: pointer; transition: box-shadow .2s, transform .15s;
+    user-select: none; position: relative;
   }
+  .logo-mark:hover { box-shadow: 0 0 28px rgba(99,102,241,.6); transform: scale(1.04); }
+  .logo-mark.has-filter { box-shadow: 0 0 0 2.5px var(--accent), 0 0 20px rgba(99,102,241,.5); }
+  .logo-mark .filter-dot {
+    position: absolute; top: -3px; right: -3px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: var(--accent2); border: 2px solid var(--bg);
+    display: none;
+  }
+  .logo-mark.has-filter .filter-dot { display: block; }
 
+  /* CD POPOVER */
+  .cd-popover {
+    position: absolute; top: calc(100% + 10px); left: 0;
+    min-width: 200px;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 6px;
+    box-shadow: 0 12px 40px rgba(0,0,0,.6), 0 0 0 1px var(--border-glow);
+    z-index: 200; display: none; animation: fadeSlideIn .15s ease;
+  }
+  .cd-popover.open { display: block; }
+  .cd-popover-title {
+    font-size: 10px; font-weight: 600; color: var(--text-hint);
+    text-transform: uppercase; letter-spacing: .1em;
+    padding: 5px 8px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
+  }
+  .cd-popover-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer;
+    font-size: 13px; font-weight: 500; color: var(--text-muted);
+    transition: all .15s; border: none; background: transparent; width: 100%; text-align: left;
+  }
+  .cd-popover-item:hover { background: var(--surface); color: var(--text); }
+  .cd-popover-item.active { background: var(--accent-glow); color: var(--accent-h); }
+  .cd-popover-item .item-dot {
+    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
+  }
+  .cd-popover-item .item-count {
+    margin-left: auto; font-size: 11px; opacity: .6;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .cd-popover-sep { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
   .app-title {
-    font-size: 19px;
-    font-weight: 700;
-    letter-spacing: -.03em;
+    font-size: 19px; font-weight: 700; letter-spacing: -.03em;
     background: linear-gradient(90deg, var(--text), var(--accent-h));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
-  .app-sub {
-    font-size: 12px;
-    color: var(--text-muted);
-    margin-top: 2px;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
-
+  .app-sub { font-size: 12px; color: var(--text-muted); margin-top: 2px; display: flex; align-items: center; gap: 8px; }
   #sheet-status {
-    font-size: 11px;
-    padding: 2px 10px;
-    border-radius: 20px;
-    background: var(--surface2);
-    color: var(--text-muted);
-    border: 1px solid var(--border);
-    font-weight: 500;
-    transition: all .3s;
+    font-size: 11px; padding: 2px 10px; border-radius: 20px;
+    background: var(--surface2); color: var(--text-muted);
+    border: 1px solid var(--border); font-weight: 500; transition: all .3s;
   }
   #sheet-status.ok  { background: var(--green-bg); color: var(--green); border-color: rgba(16,185,129,.3); }
   #sheet-status.err { background: var(--red-bg); color: var(--red); border-color: rgba(239,68,68,.3); }
 
-  /* ─── TABS ─── */
+  /* TABS */
   .tabs {
-    display: flex;
-    gap: 4px;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 4px;
-    margin-bottom: 1.75rem;
-    width: fit-content;
-    box-shadow: var(--shadow-sm);
+    display: flex; gap: 4px; background: var(--surface);
+    border: 1px solid var(--border); border-radius: var(--radius);
+    padding: 4px; margin-bottom: 1.75rem; width: fit-content; box-shadow: var(--shadow-sm);
   }
   .tab {
-    padding: 8px 20px;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    border: none;
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    background: transparent;
-    color: var(--text-muted);
-    font-weight: 500;
-    transition: all .2s;
-    letter-spacing: -.01em;
+    padding: 8px 20px; font-size: 13px; font-family: 'Inter', sans-serif;
+    border: none; border-radius: var(--radius-sm); cursor: pointer;
+    background: transparent; color: var(--text-muted);
+    font-weight: 500; transition: all .2s; letter-spacing: -.01em;
   }
   .tab:hover { color: var(--text); background: var(--surface2); }
-  .tab.on {
-    background: linear-gradient(135deg, var(--accent), var(--purple));
-    color: #fff;
-    box-shadow: 0 2px 12px rgba(99,102,241,.4);
-  }
+  .tab.on { background: linear-gradient(135deg, var(--accent), var(--purple)); color: #fff; box-shadow: 0 2px 12px rgba(99,102,241,.4); }
   .panel { display: none; }
   .panel.on { display: block; }
 
-  /* ─── CARDS ─── */
+  /* CARDS */
   .card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    padding: 1.5rem;
-    margin-bottom: 1rem;
-    box-shadow: var(--shadow-sm);
-    transition: box-shadow .2s;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.5rem; margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm); transition: box-shadow .2s;
   }
   .card:hover { box-shadow: 0 4px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(99,102,241,.1); }
-
   .card-title {
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-hint);
-    text-transform: uppercase;
-    letter-spacing: .12em;
-    margin-bottom: 1.25rem;
-    display: flex;
-    align-items: center;
-    gap: 6px;
+    font-size: 10px; font-weight: 600; color: var(--text-hint);
+    text-transform: uppercase; letter-spacing: .12em; margin-bottom: 1.25rem;
+    display: flex; align-items: center; gap: 6px;
   }
   .card-title::before {
-    content: '';
-    display: inline-block;
-    width: 3px;
-    height: 12px;
-    background: linear-gradient(to bottom, var(--accent), var(--purple));
-    border-radius: 2px;
+    content: ''; display: inline-block; width: 3px; height: 12px;
+    background: linear-gradient(to bottom, var(--accent), var(--purple)); border-radius: 2px;
   }
 
-  /* ─── FORM ─── */
+  /* FORM */
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .field { display: flex; flex-direction: column; gap: 6px; }
-  .field label {
-    font-size: 11px;
-    color: var(--text-muted);
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: .07em;
-  }
+  .field label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; }
   .field input, .field select, .field textarea {
-    height: 40px;
-    padding: 0 13px;
-    font-size: 14px;
+    height: 40px; padding: 0 13px; font-size: 14px;
     font-family: 'Inter', sans-serif;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    background: var(--surface2);
-    color: var(--text);
-    outline: none;
-    transition: all .2s;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    background: var(--surface2); color: var(--text); outline: none; transition: all .2s;
   }
   .field input:focus, .field select:focus, .field textarea:focus {
-    border-color: var(--accent);
-    background: var(--bg);
-    box-shadow: 0 0 0 3px var(--accent-glow);
+    border-color: var(--accent); background: var(--bg); box-shadow: 0 0 0 3px var(--accent-glow);
   }
-  .field input[readonly] {
-    background: rgba(30,35,60,.6);
-    color: var(--text-muted);
-    cursor: default;
-    border-color: var(--border);
-  }
+  .field input[readonly] { background: rgba(30,35,60,.6); color: var(--text-muted); cursor: default; border-color: var(--border); }
   .field textarea { height: auto; padding: 10px 13px; resize: none; }
   .field-full { margin-bottom: 14px; }
-
-  input[type="date"]::-webkit-calendar-picker-indicator {
-    filter: invert(.5) sepia(1) saturate(2) hue-rotate(200deg);
-    cursor: pointer;
-  }
+  input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.5) sepia(1) saturate(2) hue-rotate(200deg); cursor: pointer; }
   select option { background: var(--surface2); }
 
-  /* ─── BUTTONS ─── */
+  /* BUTTONS */
   .btn {
-    height: 40px;
-    padding: 0 20px;
-    font-size: 13px;
-    font-family: 'Inter', sans-serif;
-    font-weight: 600;
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    cursor: pointer;
-    background: var(--surface2);
-    color: var(--text-muted);
-    transition: all .2s;
-    letter-spacing: -.01em;
+    height: 40px; padding: 0 20px; font-size: 13px;
+    font-family: 'Inter', sans-serif; font-weight: 600;
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    cursor: pointer; background: var(--surface2); color: var(--text-muted);
+    transition: all .2s; letter-spacing: -.01em;
   }
   .btn:hover { background: var(--border); color: var(--text); }
-
   .btn-primary {
     background: linear-gradient(135deg, var(--accent), var(--purple));
-    color: #fff;
-    border: none;
-    box-shadow: 0 2px 14px rgba(99,102,241,.35);
+    color: #fff; border: none; box-shadow: 0 2px 14px rgba(99,102,241,.35);
   }
   .btn-primary:hover { opacity: .88; box-shadow: 0 4px 20px rgba(99,102,241,.5); transform: translateY(-1px); }
-
-  .btn-send {
-    background: transparent;
-    border: 1.5px solid var(--accent);
-    color: var(--accent-h);
-    width: 100%;
-    height: 44px;
-    font-size: 14px;
-    margin-top: 4px;
-    border-radius: var(--radius-sm);
-  }
-  .btn-send:hover { background: var(--accent-glow); box-shadow: 0 0 0 3px var(--accent-glow); }
   .btn-sm { height: 32px; padding: 0 14px; font-size: 12px; }
-
-  .btn-ghost {
-    background: transparent;
-    border: 1px solid var(--border);
-    color: var(--text-muted);
-    font-size: 12px;
-    height: 32px;
-    padding: 0 12px;
-  }
+  .btn-ghost { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-size: 12px; height: 32px; padding: 0 12px; }
   .btn-ghost:hover { border-color: var(--accent); color: var(--accent-h); }
 
-  /* ─── ALERTS ─── */
+  /* ALERTS */
   .alert {
-    border-radius: var(--radius-sm);
-    padding: 11px 15px;
-    font-size: 13px;
-    margin-top: 10px;
-    display: none;
-    line-height: 1.6;
-    border: 1px solid transparent;
+    border-radius: var(--radius-sm); padding: 11px 15px; font-size: 13px;
+    margin-top: 10px; display: none; line-height: 1.6; border: 1px solid transparent;
     animation: fadeSlideIn .2s ease;
   }
   .alert-success { background: var(--green-bg); color: var(--green); border-color: rgba(16,185,129,.25); }
   .alert-danger  { background: var(--red-bg); color: var(--red); border-color: rgba(239,68,68,.25); }
   .alert-warn    { background: var(--accent2-bg); color: var(--accent2); border-color: rgba(245,158,11,.25); }
+  @keyframes fadeSlideIn { from { opacity: 0; transform: translateY(-6px); } to { opacity: 1; transform: translateY(0); } }
 
-  @keyframes fadeSlideIn {
-    from { opacity: 0; transform: translateY(-6px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-
-  /* ─── TABLE ─── */
+  /* TABLE */
   .tbl-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
   .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
   .tbl th {
-    text-align: left;
-    font-size: 10px;
-    font-weight: 600;
-    color: var(--text-hint);
-    text-transform: uppercase;
-    letter-spacing: .1em;
-    padding: 8px 12px;
-    border-bottom: 1px solid var(--border);
-    white-space: nowrap;
-    background: var(--surface);
-    position: sticky;
-    top: 0;
-    z-index: 1;
+    text-align: left; font-size: 10px; font-weight: 600; color: var(--text-hint);
+    text-transform: uppercase; letter-spacing: .1em; padding: 8px 12px;
+    border-bottom: 1px solid var(--border); white-space: nowrap;
+    background: var(--surface); position: sticky; top: 0; z-index: 1;
   }
-  .tbl td {
-    padding: 10px 12px;
-    border-bottom: 1px solid rgba(37,42,64,.8);
-    color: var(--text);
-    vertical-align: middle;
-    transition: background .15s;
-  }
+  .tbl td { padding: 10px 12px; border-bottom: 1px solid rgba(37,42,64,.8); color: var(--text); vertical-align: middle; transition: background .15s; }
   .tbl tr:last-child td { border-bottom: none; }
   .tbl tbody tr:hover td { background: var(--surface2); }
   .tbl-empty { text-align: center; color: var(--text-hint); padding: 2.5rem !important; font-size: 13px; }
 
-  /* ─── BADGES ─── */
-  .badge {
-    display: inline-flex;
-    align-items: center;
-    font-size: 11px;
-    font-weight: 600;
-    padding: 3px 9px;
-    border-radius: 20px;
-    letter-spacing: .02em;
-    white-space: nowrap;
+  /* BADGES / CD PILLS */
+  .cd-color-0 { --cc: #818CF8; --cc-bg: rgba(99,102,241,.15); --cc-border: rgba(99,102,241,.3); }
+  .cd-color-1 { --cc: #22D3EE; --cc-bg: rgba(6,182,212,.15); --cc-border: rgba(6,182,212,.3); }
+  .cd-color-2 { --cc: #34D399; --cc-bg: rgba(16,185,129,.15); --cc-border: rgba(16,185,129,.3); }
+  .cd-color-3 { --cc: #C084FC; --cc-bg: rgba(168,85,247,.15); --cc-border: rgba(168,85,247,.3); }
+  .cd-color-4 { --cc: #FB923C; --cc-bg: rgba(249,115,22,.15); --cc-border: rgba(249,115,22,.3); }
+  .cd-color-5 { --cc: #60A5FA; --cc-bg: rgba(59,130,246,.15); --cc-border: rgba(59,130,246,.3); }
+  .cd-color-6 { --cc: #FBBF24; --cc-bg: rgba(245,158,11,.15); --cc-border: rgba(245,158,11,.3); }
+  .cd-color-7 { --cc: #F87171; --cc-bg: rgba(239,68,68,.15); --cc-border: rgba(239,68,68,.3); }
+  .cd-pill {
+    display: inline-flex; align-items: center; gap: 5px;
+    padding: 3px 10px; border-radius: 20px; font-size: 11px; font-weight: 600;
+    background: var(--cc-bg); color: var(--cc); border: 1px solid var(--cc-border);
   }
-  .badge-indigo { background: var(--accent-glow); color: var(--accent-h); border: 1px solid rgba(99,102,241,.3); }
-  .badge-green  { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,.25); }
-  .badge-amber  { background: var(--accent2-bg); color: var(--accent2); border: 1px solid rgba(245,158,11,.25); }
-  .badge-cyan   { background: var(--cyan-bg); color: var(--cyan); border: 1px solid rgba(6,182,212,.25); }
-  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(168,85,247,.25); }
-  .badge-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(249,115,22,.25); }
-  .badge-blue   { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,.25); }
-  .badge-red    { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,.25); }
+  .cd-pill::before { content: ''; width: 5px; height: 5px; border-radius: 50%; background: var(--cc); display: inline-block; }
 
-  /* ─── CD CHIPS (filter) ─── */
-  .chips-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-    margin-bottom: 1rem;
-  }
-  .chip {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    padding: 5px 13px;
-    border-radius: 20px;
-    font-size: 12px;
-    font-weight: 600;
-    cursor: pointer;
-    border: 1px solid var(--border);
-    background: var(--surface2);
-    color: var(--text-muted);
-    transition: all .2s;
-    user-select: none;
-  }
-  .chip:hover { border-color: var(--accent); color: var(--accent-h); background: var(--accent-glow); }
-  .chip.active {
-    background: linear-gradient(135deg, var(--accent), var(--purple));
-    border-color: transparent;
-    color: #fff;
-    box-shadow: 0 2px 12px rgba(99,102,241,.4);
-  }
-  .chip-dot {
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    opacity: .7;
-  }
-  .chip-count {
-    background: rgba(255,255,255,.15);
-    border-radius: 10px;
-    padding: 0 6px;
-    font-size: 10px;
-    min-width: 18px;
-    text-align: center;
-  }
-
-  /* ─── FILTER ROW ─── */
-  .filter-row {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    align-items: flex-end;
-    margin-bottom: 1rem;
-    padding: 1rem 1.25rem;
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-  }
-  .filter-row .field { margin-bottom: 0; min-width: 140px; }
-  .filter-row .field input { height: 36px; font-size: 13px; }
-  .filter-row label { font-size: 10px; }
-
-  /* ─── SUMMARY STATS ─── */
-  .stats-row {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-    gap: 10px;
-    margin-bottom: 1.25rem;
-  }
+  /* STATS */
+  .stats-row { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 1.25rem; }
   .stat-card {
-    background: var(--surface2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius-sm);
-    padding: 12px 16px;
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-    transition: all .2s;
+    background: var(--surface2); border: 1px solid var(--border);
+    border-radius: var(--radius-sm); padding: 12px 16px;
+    display: flex; flex-direction: column; gap: 4px; transition: all .2s;
   }
   .stat-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--border-glow); }
   .stat-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
   .stat-val {
-    font-size: 22px;
-    font-weight: 700;
-    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px; font-weight: 700; font-family: 'JetBrains Mono', monospace;
     background: linear-gradient(90deg, var(--text), var(--accent-h));
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
   }
   .stat-sub { font-size: 11px; color: var(--text-muted); }
 
-  /* ─── META INFO ─── */
-  .info-row {
-    display: flex; gap: 6px; align-items: baseline; margin-bottom: 6px;
+  /* FILTER ROW */
+  .filter-card {
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: var(--radius); padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem; box-shadow: var(--shadow-sm);
   }
-  .info-label { font-size: 11px; color: var(--text-hint); min-width: 72px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
-  .info-val { font-size: 14px; color: var(--text); font-weight: 500; }
-  .nota-display {
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 22px;
-    font-weight: 700;
-    color: var(--accent-h);
-    letter-spacing: .06em;
+  .filter-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr auto;
+    gap: 12px; align-items: flex-end;
   }
+  .filter-grid .field { margin-bottom: 0; }
+  .filter-grid .field input,
+  .filter-grid .field select { height: 38px; font-size: 13px; }
+  .filter-grid .field label { font-size: 10px; }
 
-  /* ─── EMAIL PREVIEW ─── */
-  .email-preview {
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    margin-top: 1rem;
-    display: none;
-    animation: fadeSlideIn .2s ease;
-  }
-  .email-header {
-    background: var(--surface2);
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-  }
-  .email-row {
-    display: flex; gap: 8px; margin-bottom: 5px; font-size: 13px;
-  }
-  .email-row:last-child { margin-bottom: 0; }
-  .email-lbl { color: var(--text-hint); min-width: 56px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
-  .email-val { color: var(--text); }
-  .email-body {
-    padding: 16px;
-    font-size: 13px;
-    line-height: 1.85;
-    color: var(--text-muted);
-    white-space: pre-wrap;
-    font-family: 'Inter', sans-serif;
-  }
-
-  .sep { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
-
-  .hint { font-size: 12px; color: var(--text-hint); margin-top: 5px; }
-
-  /* ─── EMPTY STATE ─── */
-  .empty-state {
-    text-align: center;
-    padding: 3rem 1rem;
-    color: var(--text-hint);
-  }
+  /* EMPTY */
+  .empty-state { text-align: center; padding: 3rem 1rem; color: var(--text-hint); }
   .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: .5; }
   .empty-state p { font-size: 13px; line-height: 1.6; }
 
-  /* ─── RESPONSIVE ─── */
-  @media (max-width: 640px) {
-    .grid2, .grid3 { grid-template-columns: 1fr; }
-    .app { padding: 1rem 1rem 3rem; }
-    .app-title { font-size: 16px; }
-    .filter-row { flex-direction: column; }
-    .filter-row .field { min-width: unset; width: 100%; }
-    .stats-row { grid-template-columns: 1fr 1fr; }
+  .sep { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* CHECKBOX & TRASH */
+  .tbl-cb { width: 16px; height: 16px; accent-color: var(--accent); cursor: pointer; }
+  .btn-trash {
+    background: transparent; border: 1px solid transparent;
+    color: var(--text-hint); cursor: pointer; padding: 4px 7px;
+    border-radius: var(--radius-xs, 4px); font-size: 14px; line-height: 1;
+    transition: all .15s;
+  }
+  .btn-trash:hover { color: var(--red); border-color: rgba(239,68,68,.3); background: var(--red-bg); }
+  .tbl th:first-child, .tbl td:first-child { width: 36px; padding-left: 12px; padding-right: 4px; }
+  .tbl th:last-child,  .tbl td:last-child  { width: 44px; text-align: center; }
+
+  /* BULK ACTION BAR */
+  .bulk-bar {
+    position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px);
+    background: var(--surface2); border: 1px solid var(--accent);
+    border-radius: var(--radius); padding: 10px 20px;
+    display: flex; align-items: center; gap: 14px;
+    box-shadow: 0 8px 32px rgba(0,0,0,.6), 0 0 0 1px var(--border-glow);
+    transition: transform .25s cubic-bezier(.34,1.56,.64,1), opacity .2s;
+    opacity: 0; pointer-events: none; z-index: 100;
+    white-space: nowrap;
+  }
+  .bulk-bar.show { transform: translateX(-50%) translateY(0); opacity: 1; pointer-events: auto; }
+  .bulk-bar-txt { font-size: 13px; color: var(--text-muted); }
+  .bulk-bar-txt strong { color: var(--text); }
+  .btn-danger {
+    background: var(--red-bg); color: var(--red);
+    border: 1px solid rgba(239,68,68,.3); border-radius: var(--radius-sm);
+    padding: 0 16px; height: 34px; font-size: 13px; font-family: 'Inter', sans-serif;
+    font-weight: 600; cursor: pointer; transition: all .2s;
+  }
+  .btn-danger:hover { background: var(--red); color: #fff; }
+  .btn-desel {
+    background: transparent; color: var(--text-hint);
+    border: 1px solid var(--border); border-radius: var(--radius-sm);
+    padding: 0 14px; height: 34px; font-size: 12px; font-family: 'Inter', sans-serif;
+    cursor: pointer; transition: all .15s;
+  }
+  .btn-desel:hover { color: var(--text); border-color: var(--text-muted); }
+
+  /* CD CONTEXT BAR (no formulário de registro) */
+  .cd-context-bar {
+    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+    border-radius: var(--radius-sm); margin-bottom: 1rem;
+    font-size: 13px; font-weight: 500;
+    border: 1px solid transparent; transition: all .2s;
+  }
+  .cd-context-bar.no-cd {
+    background: var(--accent2-bg); color: var(--accent2);
+    border-color: rgba(245,158,11,.25);
+  }
+  .cd-context-bar.with-cd {
+    background: var(--green-bg); color: var(--green);
+    border-color: rgba(16,185,129,.25);
+  }
+  .cd-context-bar .cb-icon { font-size: 15px; flex-shrink: 0; }
+  .cd-context-bar .cb-label { flex: 1; }
+  .cd-context-bar .cb-cd-name {
+    font-family: 'JetBrains Mono', monospace; font-weight: 700;
+    font-size: 14px; letter-spacing: .03em;
   }
 
-  /* ─── SCROLLBAR ─── */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
+
   ::-webkit-scrollbar { width: 6px; height: 6px; }
   ::-webkit-scrollbar-track { background: var(--surface); }
   ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
-  /* mono numbers in table */
-  .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
-
-  /* cd pill colors cycle */
-  .cd-color-0 { --cc: var(--accent); --cc-bg: var(--accent-glow); --cc-border: rgba(99,102,241,.3); }
-  .cd-color-1 { --cc: var(--cyan); --cc-bg: var(--cyan-bg); --cc-border: rgba(6,182,212,.3); }
-  .cd-color-2 { --cc: var(--green); --cc-bg: var(--green-bg); --cc-border: rgba(16,185,129,.3); }
-  .cd-color-3 { --cc: var(--purple); --cc-bg: var(--purple-bg); --cc-border: rgba(168,85,247,.3); }
-  .cd-color-4 { --cc: var(--orange); --cc-bg: var(--orange-bg); --cc-border: rgba(249,115,22,.3); }
-  .cd-color-5 { --cc: var(--blue); --cc-bg: var(--blue-bg); --cc-border: rgba(59,130,246,.3); }
-  .cd-color-6 { --cc: var(--accent2); --cc-bg: var(--accent2-bg); --cc-border: rgba(245,158,11,.3); }
-  .cd-color-7 { --cc: var(--red); --cc-bg: var(--red-bg); --cc-border: rgba(239,68,68,.3); }
-
-  .cd-pill {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    padding: 2px 9px;
-    border-radius: 20px;
-    font-size: 11px;
-    font-weight: 600;
-    background: var(--cc-bg);
-    color: var(--cc);
-    border: 1px solid var(--cc-border);
-  }
-
-  /* loading spinner */
-  @keyframes spin { to { transform: rotate(360deg); } }
-  .spinner {
-    display: inline-block;
-    width: 12px; height: 12px;
-    border: 2px solid var(--border);
-    border-top-color: var(--accent);
-    border-radius: 50%;
-    animation: spin .7s linear infinite;
-    vertical-align: middle;
-    margin-right: 6px;
+  @media (max-width: 700px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .filter-grid { grid-template-columns: 1fr 1fr; }
+    .filter-grid .btn-ghost { grid-column: span 2; }
+    .app { padding: 1rem 1rem 3rem; }
   }
 </style>
 </head>
@@ -572,7 +372,18 @@
   <!-- HEADER -->
   <div class="app-header">
     <div class="header-left">
-      <div class="logo-mark">CD</div>
+      <div class="logo-wrap">
+        <button class="logo-mark" id="logo-btn" onclick="togglePopover(event)" title="Filtrar por Estabelecimento (CD)">
+          CD
+          <span class="filter-dot"></span>
+        </button>
+        <div class="cd-popover" id="cd-popover">
+          <div class="cd-popover-title">Filtrar por CD</div>
+          <button class="cd-popover-item active" id="pop-todos" onclick="selecionarCd('')">Todos os estabelecimentos</button>
+          <hr class="cd-popover-sep">
+          <div id="pop-lista"></div>
+        </div>
+      </div>
       <div>
         <div class="app-title">Devoluções CD</div>
         <div class="app-sub">
@@ -594,14 +405,22 @@
     <div class="card">
       <div class="card-title">dados da devolução</div>
 
+      <!-- Banner de contexto do CD ativo -->
+      <div id="cd-context-bar" class="cd-context-bar no-cd">
+        <span class="cb-icon">⚠️</span>
+        <span class="cb-label">Nenhum estabelecimento selecionado. <strong>Clique no ícone CD</strong> no canto superior esquerdo para escolher o CD antes de buscar.</span>
+      </div>
+
       <div class="grid3">
         <div class="field">
           <label>Nº do Pedido</label>
-          <input type="text" id="r-pedido" placeholder="Ex: 13229493" oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
+          <input type="text" id="r-pedido" placeholder="Ex: 13229493"
+                 oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
         </div>
         <div class="field">
           <label>Nº da NF</label>
-          <input type="text" id="r-nota" placeholder="Ex: 472906" oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
+          <input type="text" id="r-nota" placeholder="Ex: 472906"
+                 oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
         </div>
         <div class="field">
           <label>Data de chegada ao CD</label>
@@ -645,7 +464,6 @@
             <input type="text" id="r-obs" placeholder="Ex: produto aguarda vistoria, caixa lacrada...">
           </div>
         </div>
-
         <button class="btn btn-primary" style="width:100%;margin-top:4px;height:44px;font-size:14px" onclick="gerarEAbrir()">
           ✉ Enviar e-mail ao vendedor e supervisor
         </button>
@@ -675,31 +493,30 @@
       </div>
     </div>
 
-    <div class="card">
-      <div class="card-title">filtros</div>
-
-      <!-- CD chips -->
-      <div id="cd-chips-label" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;display:none">Filtrar por Estabelecimento (CD):</div>
-      <div class="chips-row" id="cd-chips"></div>
-
-      <!-- Date filter -->
-      <div class="filter-row" id="filter-row">
+    <!-- Filtros -->
+    <div class="filter-card">
+      <div class="card-title" style="margin-bottom:1rem">filtros <span id="filtro-cd-badge" style="display:none;margin-left:6px;font-size:10px;background:var(--accent-glow);color:var(--accent-h);padding:2px 8px;border-radius:20px;border:1px solid rgba(99,102,241,.3);font-weight:600;letter-spacing:0"></span></div>
+      <div class="filter-grid" style="grid-template-columns:1fr 1fr 1fr auto">
+        <!-- Filtro de data De -->
         <div class="field">
-          <label>Data de chegada — De</label>
-          <input type="date" id="f-de">
+          <label>Data chegada — De</label>
+          <input type="date" id="f-de" oninput="renderHist()">
         </div>
+        <!-- Filtro de data Até -->
         <div class="field">
           <label>Até</label>
-          <input type="date" id="f-ate">
+          <input type="date" id="f-ate" oninput="renderHist()">
         </div>
-        <div class="field" style="min-width:unset;flex:1">
-          <label>Buscar texto</label>
-          <input type="text" id="f-busca" placeholder="Pedido, NF, cliente, vendedor...">
+        <!-- Busca livre -->
+        <div class="field">
+          <label>Busca livre</label>
+          <input type="text" id="f-busca" placeholder="Pedido, NF, cliente..." oninput="renderHist()">
         </div>
-        <button class="btn btn-ghost" onclick="limparFiltros()">✕ Limpar filtros</button>
+        <button class="btn btn-ghost" onclick="limparFiltros()" style="white-space:nowrap">✕ Limpar</button>
       </div>
     </div>
 
+    <!-- Tabela -->
     <div class="card">
       <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1.25rem;flex-wrap:wrap">
         <div class="card-title" style="margin-bottom:0;flex:1">devoluções registradas nesta sessão</div>
@@ -708,6 +525,7 @@
           <input type="email" id="rel-dest" value="cadastro@acripel.com.br" style="height:36px;font-size:13px">
         </div>
         <button class="btn btn-primary btn-sm" style="height:36px;white-space:nowrap" onclick="enviarRelatorio()">Enviar relatório</button>
+        <button class="btn btn-sm" style="height:36px;white-space:nowrap;background:var(--red-bg);color:var(--red);border-color:rgba(239,68,68,.3)" onclick="apagarTudo()">🗑 Apagar tudo</button>
       </div>
 
       <div id="hist-empty" class="empty-state">
@@ -720,6 +538,7 @@
           <table class="tbl">
             <thead>
               <tr>
+                <th><input type="checkbox" class="tbl-cb" id="cb-all" onclick="toggleAll(this)" title="Selecionar todos"></th>
                 <th>Estabelecimento</th>
                 <th>Pedido</th>
                 <th>NF</th>
@@ -728,19 +547,27 @@
                 <th>Supervisor</th>
                 <th>Motivo</th>
                 <th>Data chegada</th>
+                <th></th>
               </tr>
             </thead>
             <tbody id="hist-tbody"></tbody>
           </table>
         </div>
         <div id="hist-no-filter" class="alert alert-warn" style="margin-top:.75rem;display:none">
-          Nenhum resultado com os filtros aplicados. <button class="btn btn-ghost btn-sm" onclick="limparFiltros()" style="margin-left:8px">Limpar filtros</button>
+          Nenhum resultado com os filtros aplicados.
+          <button class="btn btn-ghost btn-sm" onclick="limparFiltros()" style="margin-left:8px">Limpar filtros</button>
         </div>
       </div>
     </div>
 
   </div>
 
+  <!-- BULK ACTION BAR -->
+  <div class="bulk-bar" id="bulk-bar">
+    <span class="bulk-bar-txt"><strong id="bulk-count">0</strong> nota(s) selecionada(s)</span>
+    <button class="btn-danger" onclick="apagarSelecionados()">🗑 Apagar selecionadas</button>
+    <button class="btn-desel" onclick="deselecionarTudo()">✕ Cancelar</button>
+  </div>
 </div>
 
 <script>
@@ -756,11 +583,19 @@ const SHEET_URL = "https://script.google.com/macros/s/AKfycbxoUCy8Ovq1Fo8ESVzK7g
 // Coluna G = emailVend      (r[6])
 // Coluna H = emailSup       (r[7])
 
-let dadosSheet  = [];
-let historico   = [];
-let cdFiltroAtivo = null;    // estabelecimento selecionado
+let dadosSheet    = [];
+let historico     = [];
 let buscaTimeout  = null;
-const cdCores = {};          // mapa cd -> índice de cor
+let cdFiltroAtivo = '';   // estabelecimento selecionado via popover do ícone CD
+
+// ─── COR POR CD ───────────────────────────────────────────────────────────
+const cdCores = {};
+let cdCorIndex = 0;
+function getCdCorClass(cd) {
+  if (!cd) return 'cd-color-0';
+  if (cdCores[cd] === undefined) { cdCores[cd] = cdCorIndex++ % 8; }
+  return 'cd-color-' + cdCores[cd];
+}
 
 // ─── PLANILHA ─────────────────────────────────────────────────────────────
 async function carregarPlanilha() {
@@ -774,7 +609,7 @@ async function carregarPlanilha() {
     dadosSheet = [];
     for (let i = 1; i < rows.length; i++) {
       const r = rows[i];
-      if (!r[1] && !r[2]) continue;  // sem pedido e sem NF → pula
+      if (!r[1] && !r[2]) continue;
       dadosSheet.push({
         estabelecimento: String(r[0] || '').trim(),
         pedido:          String(r[1] || '').trim(),
@@ -788,10 +623,84 @@ async function carregarPlanilha() {
     }
     status.textContent = dadosSheet.length + ' registros';
     status.className = 'ok';
+    popularSelectEstab();
   } catch(e) {
     console.error(e);
     status.textContent = 'erro ao conectar';
     status.className = 'err';
+  }
+}
+
+// Popula o popover do ícone CD com os estabelecimentos únicos da planilha
+const CD_DOT_COLORS = ['#818CF8','#22D3EE','#34D399','#C084FC','#FB923C','#60A5FA','#FBBF24','#F87171'];
+function popularSelectEstab() {
+  const lista = document.getElementById('pop-lista');
+  const cds = [...new Set(dadosSheet.map(r => r.estabelecimento).filter(Boolean))].sort();
+  lista.innerHTML = cds.map((cd, i) => {
+    const cor = CD_DOT_COLORS[i % 8];
+    return `<button class="cd-popover-item" data-cd="${cd}" onclick="selecionarCd('${cd.replace(/'/g,"\\'")}')"
+              style="--item-cor:${cor}">
+              <span class="item-dot" style="background:${cor}"></span>
+              ${cd}
+              <span class="item-count">${dadosSheet.filter(r=>r.estabelecimento===cd).length}</span>
+            </button>`;
+  }).join('');
+}
+
+// Toggle do popover ao clicar no ícone CD
+function togglePopover(e) {
+  e.stopPropagation();
+  document.getElementById('cd-popover').classList.toggle('open');
+}
+
+// Fechar popover ao clicar fora
+document.addEventListener('click', () => {
+  document.getElementById('cd-popover').classList.remove('open');
+});
+
+// Selecionar/deselecionar um CD no popover
+function selecionarCd(cd) {
+  cdFiltroAtivo = cd;
+  document.getElementById('cd-popover').classList.remove('open');
+
+  // Atualiza estado visual do ícone
+  const logo = document.getElementById('logo-btn');
+  logo.classList.toggle('has-filter', !!cd);
+
+  // Badge no card de filtros
+  const badge = document.getElementById('filtro-cd-badge');
+  if (cd) { badge.textContent = cd; badge.style.display = 'inline'; }
+  else    { badge.style.display = 'none'; }
+
+  // Marca item ativo no popover
+  document.querySelectorAll('.cd-popover-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.cd === cd || (cd === '' && el.id === 'pop-todos'));
+  });
+
+  // Reset do formulário de busca (evita manter um resultado de outro CD)
+  document.getElementById('r-pedido').value = '';
+  document.getElementById('r-nota').value   = '';
+  document.getElementById('r-found').style.display  = 'none';
+  document.getElementById('r-nfound').style.display = 'none';
+  document.getElementById('r-extra').style.display  = 'none';
+
+  // Atualiza o banner de contexto no formulário
+  atualizarContextBar(cd);
+
+  renderHist();
+}
+
+function atualizarContextBar(cd) {
+  const bar = document.getElementById('cd-context-bar');
+  if (!bar) return;
+  if (cd) {
+    bar.className = 'cd-context-bar with-cd';
+    bar.innerHTML = `<span class="cb-icon">✅</span>
+      <span class="cb-label">Buscando no estabelecimento: <span class="cb-cd-name">${cd}</span></span>`;
+  } else {
+    bar.className = 'cd-context-bar no-cd';
+    bar.innerHTML = `<span class="cb-icon">⚠️</span>
+      <span class="cb-label">Nenhum estabelecimento selecionado. <strong>Clique no ícone CD</strong> no canto superior esquerdo para escolher antes de buscar.</span>`;
   }
 }
 
@@ -832,15 +741,25 @@ function _buscar() {
   loading.style.display = 'none';
 
   const norm = s => String(s || '').trim().replace(/\.0$/, '').replace(/\.00$/, '');
+
+  // Se houver um CD ativo, busca APENAS nas notas daquele estabelecimento
   const registro = dadosSheet.find(r =>
-    (pedido && norm(r.pedido) === norm(pedido)) ||
-    (nf     && norm(r.nf)     === norm(nf))
+    (cdFiltroAtivo ? r.estabelecimento === cdFiltroAtivo : true) &&
+    ((pedido && norm(r.pedido) === norm(pedido)) ||
+     (nf     && norm(r.nf)    === norm(nf)))
   );
 
+  if (!registro && cdFiltroAtivo) {
+    // Não encontrado neste CD específico
+    nfound.style.display = 'block';
+    nfound.innerHTML = `Pedido/NF não encontrado no estabelecimento <strong>${cdFiltroAtivo}</strong>. Verifique o número ou mude o CD no ícone superior.`;
+    return;
+  }
+
   if (registro) {
+    const corClass = getCdCorClass(registro.estabelecimento);
     found.style.display = 'block';
-    const cdCorClass = getCdCorClass(registro.estabelecimento);
-    found.innerHTML = `<strong>Registro encontrado</strong> — <span class="cd-pill ${cdCorClass}">${registro.estabelecimento || 'CD'}</span> &nbsp;Pedido: ${norm(registro.pedido)} | NF: ${norm(registro.nf)} | ${registro.cliente}`;
+    found.innerHTML = `<strong>Registro encontrado</strong> — <span class="cd-pill ${corClass}">${registro.estabelecimento || 'CD'}</span> &nbsp;Pedido: ${norm(registro.pedido)} | NF: ${norm(registro.nf)} | ${registro.cliente}`;
     document.getElementById('r-pedido').value = norm(registro.pedido);
     document.getElementById('r-nota').value   = norm(registro.nf);
     document.getElementById('r-estab').value  = registro.estabelecimento;
@@ -863,11 +782,10 @@ function gerarEAbrir() {
   const motivo = document.getElementById('r-motivo').value.trim();
   if (!motivo) { alert('Informe o motivo da devolução.'); return; }
 
-  const data    = document.getElementById('r-data').value;
-  const obs     = document.getElementById('r-obs').value.trim();
-  const dest    = registro.emailVend;
-  const cc      = registro.emailSup;
-
+  const data  = document.getElementById('r-data').value;
+  const obs   = document.getElementById('r-obs').value.trim();
+  const dest  = registro.emailVend;
+  const cc    = registro.emailSup;
   if (!dest) { alert('E-mail do vendedor não encontrado na planilha.'); return; }
 
   const nome1   = registro.vendedor.split(' ')[0];
@@ -908,20 +826,7 @@ Equipe CD / Logística`;
     data:            dataFmt,
     dataISO
   });
-
   renderHist();
-}
-
-// ─── COR POR CD ───────────────────────────────────────────────────────────
-const CD_CORES_TOTAL = 8;
-let cdCorIndex = 0;
-function getCdCorClass(cd) {
-  if (!cd) return 'cd-color-0';
-  if (cdCores[cd] === undefined) {
-    cdCores[cd] = cdCorIndex % CD_CORES_TOTAL;
-    cdCorIndex++;
-  }
-  return 'cd-color-' + cdCores[cd];
 }
 
 // ─── HISTÓRICO ────────────────────────────────────────────────────────────
@@ -932,59 +837,49 @@ function renderHist() {
   const statsRow   = document.getElementById('stats-row');
   const noFilter   = document.getElementById('hist-no-filter');
 
-  // stats globais
   const cdsUnicos = [...new Set(historico.map(h => h.estabelecimento).filter(Boolean))];
-  document.getElementById('stat-total').textContent = historico.length;
-  document.getElementById('stat-cds').textContent   = cdsUnicos.length;
+  document.getElementById('stat-total').textContent  = historico.length;
+  document.getElementById('stat-cds').textContent    = cdsUnicos.length;
 
   if (!historico.length) {
-    wrap.style.display      = 'none';
+    wrap.style.display       = 'none';
     emptyState.style.display = 'block';
     statsRow.style.display   = 'none';
-    renderChips([]);
     return;
   }
-
   statsRow.style.display   = 'grid';
   emptyState.style.display = 'none';
   wrap.style.display       = 'block';
 
-  renderChips(cdsUnicos);
+  // Lê filtros
+  const estabSel = cdFiltroAtivo;
+  const de       = document.getElementById('f-de').value;
+  const ate      = document.getElementById('f-ate').value;
+  const busca    = document.getElementById('f-busca').value.trim().toLowerCase();
 
-  // Aplicar filtros
-  const de    = document.getElementById('f-de').value;
-  const ate   = document.getElementById('f-ate').value;
-  const busca = document.getElementById('f-busca').value.trim().toLowerCase();
-
-  let lista = [...historico].reverse();
-
-  if (cdFiltroAtivo) {
-    lista = lista.filter(h => h.estabelecimento === cdFiltroAtivo);
-  }
-  if (de) {
-    lista = lista.filter(h => h.dataISO >= de);
-  }
-  if (ate) {
-    lista = lista.filter(h => h.dataISO <= ate);
-  }
-  if (busca) {
-    lista = lista.filter(h =>
-      [h.pedido, h.nf, h.cliente, h.vendedor, h.supervisor, h.motivo, h.estabelecimento]
-        .some(v => (v || '').toLowerCase().includes(busca))
-    );
-  }
+  // Preserva o índice original antes de filtrar
+  let lista = historico.map((h, i) => ({ ...h, _origIdx: i })).reverse();
+  if (estabSel) lista = lista.filter(h => h.estabelecimento === estabSel);
+  if (de)       lista = lista.filter(h => h.dataISO >= de);
+  if (ate)      lista = lista.filter(h => h.dataISO <= ate);
+  if (busca)    lista = lista.filter(h =>
+    [h.pedido, h.nf, h.cliente, h.vendedor, h.supervisor, h.motivo, h.estabelecimento]
+      .some(v => (v || '').toLowerCase().includes(busca))
+  );
 
   document.getElementById('stat-filtrado').textContent = lista.length;
 
   if (!lista.length) {
-    tbody.innerHTML       = '';
+    tbody.innerHTML        = '';
     noFilter.style.display = 'block';
   } else {
     noFilter.style.display = 'none';
     tbody.innerHTML = lista.map(h => {
-      const cdClass = getCdCorClass(h.estabelecimento);
-      return `<tr>
-        <td><span class="cd-pill ${cdClass}">${h.estabelecimento || '—'}</span></td>
+      const cc  = getCdCorClass(h.estabelecimento);
+      const idx = h._origIdx;   // índice real no array historico
+      return `<tr data-idx="${idx}">
+        <td><input type="checkbox" class="tbl-cb row-cb" data-idx="${idx}" onchange="atualizarBarraSelecao()"></td>
+        <td><span class="cd-pill ${cc}">${h.estabelecimento || '—'}</span></td>
         <td><span class="mono">${h.pedido}</span></td>
         <td><span class="mono">${h.nf}</span></td>
         <td>${h.cliente}</td>
@@ -992,69 +887,76 @@ function renderHist() {
         <td>${h.supervisor}</td>
         <td>${h.motivo}</td>
         <td>${h.data}</td>
+        <td><button class="btn-trash" onclick="apagarLinha(${idx})" title="Apagar esta nota">🗑</button></td>
       </tr>`;
     }).join('');
+    atualizarBarraSelecao();
   }
 }
 
-// ─── CHIPS ────────────────────────────────────────────────────────────────
-function renderChips(cds) {
-  const container = document.getElementById('cd-chips');
-  const label     = document.getElementById('cd-chips-label');
-
-  if (!cds.length) {
-    container.innerHTML = '';
-    label.style.display = 'none';
-    return;
-  }
-
-  label.style.display = 'block';
-
-  container.innerHTML = cds.map(cd => {
-    const corClass = getCdCorClass(cd);
-    const count    = historico.filter(h => h.estabelecimento === cd).length;
-    const isActive = cdFiltroAtivo === cd;
-    return `<button class="chip ${isActive ? 'active' : ''}" onclick="toggleChip('${cd.replace(/'/g, "\\'")}')">
-      <span class="chip-dot"></span>
-      ${cd}
-      <span class="chip-count">${count}</span>
-    </button>`;
-  }).join('');
-}
-
-function toggleChip(cd) {
-  cdFiltroAtivo = cdFiltroAtivo === cd ? null : cd;
+// ─── APAGAR LINHAS ────────────────────────────────────────────────────────
+function apagarLinha(idx) {
+  historico.splice(idx, 1);
   renderHist();
 }
 
-// ─── FILTROS ──────────────────────────────────────────────────────────────
+function apagarSelecionados() {
+  const checks = [...document.querySelectorAll('.row-cb:checked')];
+  if (!checks.length) return;
+  const indices = checks.map(c => parseInt(c.dataset.idx)).sort((a, b) => b - a); // desc para não deslocar
+  indices.forEach(i => historico.splice(i, 1));
+  renderHist();
+}
+
+function apagarTudo() {
+  if (!historico.length) return;
+  if (!confirm('Apagar todo o histórico desta sessão?')) return;
+  historico = [];
+  renderHist();
+}
+
+function deselecionarTudo() {
+  document.querySelectorAll('.row-cb').forEach(c => c.checked = false);
+  const all = document.getElementById('cb-all');
+  if (all) all.checked = false;
+  atualizarBarraSelecao();
+}
+
+function toggleAll(cbAll) {
+  document.querySelectorAll('.row-cb').forEach(c => c.checked = cbAll.checked);
+  atualizarBarraSelecao();
+}
+
+function atualizarBarraSelecao() {
+  const selecionadas = document.querySelectorAll('.row-cb:checked').length;
+  const bar  = document.getElementById('bulk-bar');
+  const cnt  = document.getElementById('bulk-count');
+  if (cnt) cnt.textContent = selecionadas;
+  if (bar) bar.classList.toggle('show', selecionadas > 0);
+  // Atualiza estado do checkbox "selecionar tudo"
+  const total = document.querySelectorAll('.row-cb').length;
+  const all = document.getElementById('cb-all');
+  if (all) all.indeterminate = selecionadas > 0 && selecionadas < total;
+  if (all) all.checked = total > 0 && selecionadas === total;
+}
+
+// ─── LIMPAR FILTROS ───────────────────────────────────────────────────────
 function limparFiltros() {
+  selecionarCd('');
   document.getElementById('f-de').value    = '';
   document.getElementById('f-ate').value   = '';
   document.getElementById('f-busca').value = '';
-  cdFiltroAtivo = null;
   renderHist();
 }
 
-// auto-atualiza ao mudar filtros
-['f-de', 'f-ate', 'f-busca'].forEach(id => {
-  document.getElementById(id).addEventListener('input', renderHist);
-});
-
 // ─── RELATÓRIO ────────────────────────────────────────────────────────────
 function enviarRelatorio() {
-  if (!historico.length) {
-    alert('Nenhuma devolução registrada nesta sessão para enviar.');
-    return;
-  }
-
+  if (!historico.length) { alert('Nenhuma devolução registrada nesta sessão.'); return; }
   const hoje    = new Date().toLocaleDateString('pt-BR');
   const assunto = `Relatório de devoluções — ${hoje}`;
-
-  const linhas = historico.map((h, i) =>
+  const linhas  = historico.map((h, i) =>
     `${i+1}. [${h.estabelecimento}] Pedido: ${h.pedido} | NF: ${h.nf} | Cliente: ${h.cliente} | Vendedor: ${h.vendedor} | Supervisor: ${h.supervisor} | Motivo: ${h.motivo} | Data: ${h.data}`
   ).join('\n');
-
   const corpo =
 `Prezados,
 
@@ -1068,8 +970,7 @@ Atenciosamente,
 Equipe CD / Logística`;
 
   const dest = document.getElementById('rel-dest').value.trim() || 'cadastro@acripel.com.br';
-  const link = `mailto:${encodeURIComponent(dest)}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
-  window.location.href = link;
+  window.location.href = `mailto:${encodeURIComponent(dest)}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
