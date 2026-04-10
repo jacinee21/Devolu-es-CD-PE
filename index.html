@@ -66,8 +66,6 @@
     margin-bottom: 2.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border);
   }
   .header-left { display: flex; align-items: center; gap: 14px; }
-  /* LOGO / CD FILTER BUTTON */
-  .logo-wrap { position: relative; flex-shrink: 0; }
   .logo-mark {
     width: 44px; height: 44px;
     background: linear-gradient(135deg, var(--accent), var(--purple));
@@ -75,51 +73,8 @@
     display: flex; align-items: center; justify-content: center;
     color: #fff; font-size: 15px; font-weight: 700;
     font-family: 'JetBrains Mono', monospace;
-    box-shadow: 0 0 20px rgba(99,102,241,.4);
-    border: none; cursor: pointer; transition: box-shadow .2s, transform .15s;
-    user-select: none; position: relative;
+    box-shadow: 0 0 20px rgba(99,102,241,.4); flex-shrink: 0;
   }
-  .logo-mark:hover { box-shadow: 0 0 28px rgba(99,102,241,.6); transform: scale(1.04); }
-  .logo-mark.has-filter { box-shadow: 0 0 0 2.5px var(--accent), 0 0 20px rgba(99,102,241,.5); }
-  .logo-mark .filter-dot {
-    position: absolute; top: -3px; right: -3px;
-    width: 10px; height: 10px; border-radius: 50%;
-    background: var(--accent2); border: 2px solid var(--bg);
-    display: none;
-  }
-  .logo-mark.has-filter .filter-dot { display: block; }
-
-  /* CD POPOVER */
-  .cd-popover {
-    position: absolute; top: calc(100% + 10px); left: 0;
-    min-width: 200px;
-    background: var(--surface2); border: 1px solid var(--border);
-    border-radius: var(--radius); padding: 6px;
-    box-shadow: 0 12px 40px rgba(0,0,0,.6), 0 0 0 1px var(--border-glow);
-    z-index: 200; display: none; animation: fadeSlideIn .15s ease;
-  }
-  .cd-popover.open { display: block; }
-  .cd-popover-title {
-    font-size: 10px; font-weight: 600; color: var(--text-hint);
-    text-transform: uppercase; letter-spacing: .1em;
-    padding: 5px 8px 8px; border-bottom: 1px solid var(--border); margin-bottom: 4px;
-  }
-  .cd-popover-item {
-    display: flex; align-items: center; gap: 8px;
-    padding: 7px 10px; border-radius: var(--radius-sm); cursor: pointer;
-    font-size: 13px; font-weight: 500; color: var(--text-muted);
-    transition: all .15s; border: none; background: transparent; width: 100%; text-align: left;
-  }
-  .cd-popover-item:hover { background: var(--surface); color: var(--text); }
-  .cd-popover-item.active { background: var(--accent-glow); color: var(--accent-h); }
-  .cd-popover-item .item-dot {
-    width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0;
-  }
-  .cd-popover-item .item-count {
-    margin-left: auto; font-size: 11px; opacity: .6;
-    font-family: 'JetBrains Mono', monospace;
-  }
-  .cd-popover-sep { border: none; border-top: 1px solid var(--border); margin: 4px 0; }
   .app-title {
     font-size: 19px; font-weight: 700; letter-spacing: -.03em;
     background: linear-gradient(90deg, var(--text), var(--accent-h));
@@ -171,6 +126,9 @@
   /* FORM */
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+  /* NOVO GRID 4 PARA COMPORTAR O FILTRO AO LADO DO PEDIDO */
+  .grid4 { display: grid; grid-template-columns: 1fr 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+
   .field { display: flex; flex-direction: column; gap: 6px; }
   .field label { font-size: 11px; color: var(--text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: .07em; }
   .field input, .field select, .field textarea {
@@ -182,7 +140,7 @@
   .field input:focus, .field select:focus, .field textarea:focus {
     border-color: var(--accent); background: var(--bg); box-shadow: 0 0 0 3px var(--accent-glow);
   }
-  .field input[readonly] { background: rgba(30,35,60,.6); color: var(--text-muted); cursor: default; border-color: var(--border); }
+  .field input[readonly], .field select[disabled] { background: rgba(30,35,60,.6); color: var(--text-muted); cursor: default; border-color: var(--border); }
   .field textarea { height: auto; padding: 10px 13px; resize: none; }
   .field-full { margin-bottom: 14px; }
   input[type="date"]::-webkit-calendar-picker-indicator { filter: invert(.5) sepia(1) saturate(2) hue-rotate(200deg); cursor: pointer; }
@@ -328,28 +286,6 @@
   }
   .btn-desel:hover { color: var(--text); border-color: var(--text-muted); }
 
-  /* CD CONTEXT BAR (no formulário de registro) */
-  .cd-context-bar {
-    display: flex; align-items: center; gap: 10px; padding: 10px 14px;
-    border-radius: var(--radius-sm); margin-bottom: 1rem;
-    font-size: 13px; font-weight: 500;
-    border: 1px solid transparent; transition: all .2s;
-  }
-  .cd-context-bar.no-cd {
-    background: var(--accent2-bg); color: var(--accent2);
-    border-color: rgba(245,158,11,.25);
-  }
-  .cd-context-bar.with-cd {
-    background: var(--green-bg); color: var(--green);
-    border-color: rgba(16,185,129,.25);
-  }
-  .cd-context-bar .cb-icon { font-size: 15px; flex-shrink: 0; }
-  .cd-context-bar .cb-label { flex: 1; }
-  .cd-context-bar .cb-cd-name {
-    font-family: 'JetBrains Mono', monospace; font-weight: 700;
-    font-size: 14px; letter-spacing: .03em;
-  }
-
   @keyframes spin { to { transform: rotate(360deg); } }
   .spinner { display: inline-block; width: 12px; height: 12px; border: 2px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .7s linear infinite; vertical-align: middle; margin-right: 6px; }
 
@@ -359,7 +295,7 @@
   ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
 
   @media (max-width: 700px) {
-    .grid2, .grid3 { grid-template-columns: 1fr; }
+    .grid4, .grid2, .grid3 { grid-template-columns: 1fr; }
     .filter-grid { grid-template-columns: 1fr 1fr; }
     .filter-grid .btn-ghost { grid-column: span 2; }
     .app { padding: 1rem 1rem 3rem; }
@@ -372,18 +308,7 @@
   <!-- HEADER -->
   <div class="app-header">
     <div class="header-left">
-      <div class="logo-wrap">
-        <button class="logo-mark" id="logo-btn" onclick="togglePopover(event)" title="Filtrar por Estabelecimento (CD)">
-          CD
-          <span class="filter-dot"></span>
-        </button>
-        <div class="cd-popover" id="cd-popover">
-          <div class="cd-popover-title">Filtrar por CD</div>
-          <button class="cd-popover-item active" id="pop-todos" onclick="selecionarCd('')">Todos os estabelecimentos</button>
-          <hr class="cd-popover-sep">
-          <div id="pop-lista"></div>
-        </div>
-      </div>
+      <div class="logo-mark">CD</div> <!-- Ícone original, sem popover -->
       <div>
         <div class="app-title">Devoluções CD</div>
         <div class="app-sub">
@@ -405,13 +330,16 @@
     <div class="card">
       <div class="card-title">dados da devolução</div>
 
-      <!-- Banner de contexto do CD ativo -->
-      <div id="cd-context-bar" class="cd-context-bar no-cd">
-        <span class="cb-icon">⚠️</span>
-        <span class="cb-label">Nenhum estabelecimento selecionado. <strong>Clique no ícone CD</strong> no canto superior esquerdo para escolher o CD antes de buscar.</span>
-      </div>
-
-      <div class="grid3">
+      <!-- Formulário em Grid de 4 colunas (CD + Pedido + NF + Data) -->
+      <div class="grid4">
+        <!-- *** FILTRO DA PLANILHA NO REGISTRO *** -->
+        <div class="field">
+          <label style="color:var(--accent-h);">Filtro de Estabelecimento</label>
+          <select id="r-cd-filtro" disabled title="Aguarde o carregamento...">
+            <option value="">Carregando dados...</option>
+          </select>
+        </div>
+        
         <div class="field">
           <label>Nº do Pedido</label>
           <input type="text" id="r-pedido" placeholder="Ex: 13229493"
@@ -427,10 +355,12 @@
           <input type="date" id="r-data">
         </div>
       </div>
+      
       <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="_buscar()">Buscar na planilha</button>
+      
       <div id="r-loading" class="alert alert-warn" style="display:none"><span class="spinner"></span>Buscando na planilha...</div>
       <div id="r-found"   class="alert alert-success"></div>
-      <div id="r-nfound"  class="alert alert-danger">Pedido/NF não encontrado na planilha. Verifique o número digitado.</div>
+      <div id="r-nfound"  class="alert alert-danger">Pedido/NF não encontrado na planilha. Verifique o número digitado e o filtro de estabelecimento.</div>
 
       <div id="r-extra" style="display:none">
         <div class="sep"></div>
@@ -493,24 +423,27 @@
       </div>
     </div>
 
-    <!-- Filtros -->
+    <!-- Filtros do Histórico -->
     <div class="filter-card">
-      <div class="card-title" style="margin-bottom:1rem">filtros <span id="filtro-cd-badge" style="display:none;margin-left:6px;font-size:10px;background:var(--accent-glow);color:var(--accent-h);padding:2px 8px;border-radius:20px;border:1px solid rgba(99,102,241,.3);font-weight:600;letter-spacing:0"></span></div>
-      <div class="filter-grid" style="grid-template-columns:1fr 1fr 1fr auto">
-        <!-- Filtro de data De -->
+      <div class="card-title" style="margin-bottom:1rem">filtros do histórico</div>
+      <div class="filter-grid" style="grid-template-columns:1fr 1fr 1fr 1fr auto">
+        <div class="field">
+          <label>Estabelecimento</label>
+          <select id="f-estab-hist" onchange="renderHist()">
+            <option value="">Todos</option>
+          </select>
+        </div>
         <div class="field">
           <label>Data chegada — De</label>
           <input type="date" id="f-de" oninput="renderHist()">
         </div>
-        <!-- Filtro de data Até -->
         <div class="field">
           <label>Até</label>
           <input type="date" id="f-ate" oninput="renderHist()">
         </div>
-        <!-- Busca livre -->
         <div class="field">
           <label>Busca livre</label>
-          <input type="text" id="f-busca" placeholder="Pedido, NF, cliente..." oninput="renderHist()">
+          <input type="text" id="f-busca" placeholder="Pedido, NF..." oninput="renderHist()">
         </div>
         <button class="btn btn-ghost" onclick="limparFiltros()" style="white-space:nowrap">✕ Limpar</button>
       </div>
@@ -574,19 +507,9 @@
 // ─── CONFIG ───────────────────────────────────────────────────────────────
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbxoUCy8Ovq1Fo8ESVzK7gTqsaF7q2pnJzlQDVwXyf_rG9aGSnyhodUgkhLtofXGnm_x/exec";
 
-// Coluna A = estabelecimento (r[0])
-// Coluna B = pedido         (r[1])
-// Coluna C = nf             (r[2])
-// Coluna D = cliente        (r[3])
-// Coluna E = vendedor       (r[4])
-// Coluna F = supervisor     (r[5])
-// Coluna G = emailVend      (r[6])
-// Coluna H = emailSup       (r[7])
-
 let dadosSheet    = [];
 let historico     = [];
 let buscaTimeout  = null;
-let cdFiltroAtivo = '';   // estabelecimento selecionado via popover do ícone CD
 
 // ─── COR POR CD ───────────────────────────────────────────────────────────
 const cdCores = {};
@@ -602,6 +525,10 @@ async function carregarPlanilha() {
   const status = document.getElementById('sheet-status');
   status.textContent = 'conectando...';
   status.className = '';
+  
+  const selectReg = document.getElementById('r-cd-filtro');
+  const selectHist = document.getElementById('f-estab-hist');
+  
   try {
     const resp = await fetch(SHEET_URL);
     if (!resp.ok) throw new Error('HTTP ' + resp.status);
@@ -623,84 +550,28 @@ async function carregarPlanilha() {
     }
     status.textContent = dadosSheet.length + ' registros';
     status.className = 'ok';
-    popularSelectEstab();
+
+    // Popula as duas listas (select) de CDs
+    const cds = [...new Set(dadosSheet.map(r => r.estabelecimento).filter(Boolean))].sort();
+    
+    // Select de Registro
+    selectReg.disabled = false;
+    selectReg.title = "";
+    selectReg.innerHTML = '<option value="">(Nenhum filtro)</option>';
+    
+    // Select de Histórico
+    selectHist.innerHTML = '<option value="">Todos os CDs</option>';
+    
+    cds.forEach(cd => {
+      selectReg.innerHTML += \`<option value="\${cd}">\${cd}</option>\`;
+      selectHist.innerHTML += \`<option value="\${cd}">\${cd}</option>\`;
+    });
+    
   } catch(e) {
     console.error(e);
     status.textContent = 'erro ao conectar';
     status.className = 'err';
-  }
-}
-
-// Popula o popover do ícone CD com os estabelecimentos únicos da planilha
-const CD_DOT_COLORS = ['#818CF8','#22D3EE','#34D399','#C084FC','#FB923C','#60A5FA','#FBBF24','#F87171'];
-function popularSelectEstab() {
-  const lista = document.getElementById('pop-lista');
-  const cds = [...new Set(dadosSheet.map(r => r.estabelecimento).filter(Boolean))].sort();
-  lista.innerHTML = cds.map((cd, i) => {
-    const cor = CD_DOT_COLORS[i % 8];
-    return `<button class="cd-popover-item" data-cd="${cd}" onclick="selecionarCd('${cd.replace(/'/g,"\\'")}')"
-              style="--item-cor:${cor}">
-              <span class="item-dot" style="background:${cor}"></span>
-              ${cd}
-              <span class="item-count">${dadosSheet.filter(r=>r.estabelecimento===cd).length}</span>
-            </button>`;
-  }).join('');
-}
-
-// Toggle do popover ao clicar no ícone CD
-function togglePopover(e) {
-  e.stopPropagation();
-  document.getElementById('cd-popover').classList.toggle('open');
-}
-
-// Fechar popover ao clicar fora
-document.addEventListener('click', () => {
-  document.getElementById('cd-popover').classList.remove('open');
-});
-
-// Selecionar/deselecionar um CD no popover
-function selecionarCd(cd) {
-  cdFiltroAtivo = cd;
-  document.getElementById('cd-popover').classList.remove('open');
-
-  // Atualiza estado visual do ícone
-  const logo = document.getElementById('logo-btn');
-  logo.classList.toggle('has-filter', !!cd);
-
-  // Badge no card de filtros
-  const badge = document.getElementById('filtro-cd-badge');
-  if (cd) { badge.textContent = cd; badge.style.display = 'inline'; }
-  else    { badge.style.display = 'none'; }
-
-  // Marca item ativo no popover
-  document.querySelectorAll('.cd-popover-item').forEach(el => {
-    el.classList.toggle('active', el.dataset.cd === cd || (cd === '' && el.id === 'pop-todos'));
-  });
-
-  // Reset do formulário de busca (evita manter um resultado de outro CD)
-  document.getElementById('r-pedido').value = '';
-  document.getElementById('r-nota').value   = '';
-  document.getElementById('r-found').style.display  = 'none';
-  document.getElementById('r-nfound').style.display = 'none';
-  document.getElementById('r-extra').style.display  = 'none';
-
-  // Atualiza o banner de contexto no formulário
-  atualizarContextBar(cd);
-
-  renderHist();
-}
-
-function atualizarContextBar(cd) {
-  const bar = document.getElementById('cd-context-bar');
-  if (!bar) return;
-  if (cd) {
-    bar.className = 'cd-context-bar with-cd';
-    bar.innerHTML = `<span class="cb-icon">✅</span>
-      <span class="cb-label">Buscando no estabelecimento: <span class="cb-cd-name">${cd}</span></span>`;
-  } else {
-    bar.className = 'cd-context-bar no-cd';
-    bar.innerHTML = `<span class="cb-icon">⚠️</span>
-      <span class="cb-label">Nenhum estabelecimento selecionado. <strong>Clique no ícone CD</strong> no canto superior esquerdo para escolher antes de buscar.</span>`;
+    selectReg.innerHTML = '<option value="">Erro ao carregar</option>';
   }
 }
 
@@ -720,8 +591,10 @@ function buscarNota() {
 }
 
 function _buscar() {
-  const pedido  = document.getElementById('r-pedido').value.trim();
-  const nf      = document.getElementById('r-nota').value.trim();
+  const cdFiltro = document.getElementById('r-cd-filtro').value;
+  const pedido   = document.getElementById('r-pedido').value.trim();
+  const nf       = document.getElementById('r-nota').value.trim();
+  
   const found   = document.getElementById('r-found');
   const nfound  = document.getElementById('r-nfound');
   const extra   = document.getElementById('r-extra');
@@ -742,30 +615,31 @@ function _buscar() {
 
   const norm = s => String(s || '').trim().replace(/\.0$/, '').replace(/\.00$/, '');
 
-  // Se houver um CD ativo, busca APENAS nas notas daquele estabelecimento
+  // Se houver filtro ativo na pesquisa, restringe
   const registro = dadosSheet.find(r =>
-    (cdFiltroAtivo ? r.estabelecimento === cdFiltroAtivo : true) &&
+    (cdFiltro ? r.estabelecimento === cdFiltro : true) &&
     ((pedido && norm(r.pedido) === norm(pedido)) ||
      (nf     && norm(r.nf)    === norm(nf)))
   );
 
-  if (!registro && cdFiltroAtivo) {
-    // Não encontrado neste CD específico
+  if (!registro && cdFiltro) {
     nfound.style.display = 'block';
-    nfound.innerHTML = `Pedido/NF não encontrado no estabelecimento <strong>${cdFiltroAtivo}</strong>. Verifique o número ou mude o CD no ícone superior.`;
+    nfound.innerHTML = \`Pedido/NF não encontrado no estabelecimento <strong>\${cdFiltro}</strong>.\`;
     return;
   }
 
   if (registro) {
     const corClass = getCdCorClass(registro.estabelecimento);
     found.style.display = 'block';
-    found.innerHTML = `<strong>Registro encontrado</strong> — <span class="cd-pill ${corClass}">${registro.estabelecimento || 'CD'}</span> &nbsp;Pedido: ${norm(registro.pedido)} | NF: ${norm(registro.nf)} | ${registro.cliente}`;
+    found.innerHTML = \`<strong>Registro encontrado</strong> — <span class="cd-pill \${corClass}">\${registro.estabelecimento || 'CD'}</span> &nbsp;Pedido: \${norm(registro.pedido)} | NF: \${norm(registro.nf)} | \${registro.cliente}\`;
+    
     document.getElementById('r-pedido').value = norm(registro.pedido);
     document.getElementById('r-nota').value   = norm(registro.nf);
     document.getElementById('r-estab').value  = registro.estabelecimento;
     document.getElementById('r-cli').value    = registro.cliente;
     document.getElementById('r-vend').value   = registro.vendedor;
     document.getElementById('r-sup').value    = registro.supervisor;
+    
     extra.style.display  = 'block';
     extra._registro      = registro;
   } else {
@@ -794,24 +668,24 @@ function gerarEAbrir() {
     : new Date().toLocaleDateString('pt-BR');
   const dataISO = data || new Date().toISOString().split('T')[0];
 
-  const assunto = `Devolução recebida no CD — Pedido ${registro.pedido} / NF ${registro.nf} / ${registro.cliente}`;
+  const assunto = \`Devolução recebida no CD — Pedido \${registro.pedido} / NF \${registro.nf} / \${registro.cliente}\`;
   const corpo =
-`Olá, ${nome1}!
+\`Olá, \${nome1}!
 
-Informamos que a nota fiscal Nº ${registro.nf} referente ao Pedido ${registro.pedido}, cliente ${registro.cliente}, chegou ao nosso Centro de Distribuição (${registro.estabelecimento}) em ${dataFmt}.
+Informamos que a nota fiscal Nº \${registro.nf} referente ao Pedido \${registro.pedido}, cliente \${registro.cliente}, chegou ao nosso Centro de Distribuição (\${registro.estabelecimento}) em \${dataFmt}.
 
-Motivo da devolução: ${motivo}.
-${obs ? '\nObservação: ' + obs + '\n' : ''}
+Motivo da devolução: \${motivo}.
+\${obs ? '\\nObservação: ' + obs + '\\n' : ''}
 A nota está aguardando lançamento no sistema.
 
 Em caso de dúvidas, entre em contato com a equipe do CD.
 
 Atenciosamente,
-Equipe CD / Logística`;
+Equipe CD / Logística\`;
 
-  let link  = `mailto:${encodeURIComponent(dest)}`;
-  const par = [`subject=${encodeURIComponent(assunto)}`, `body=${encodeURIComponent(corpo)}`];
-  if (cc) par.push(`cc=${encodeURIComponent(cc)}`);
+  let link  = \`mailto:\${encodeURIComponent(dest)}\`;
+  const par = [\`subject=\${encodeURIComponent(assunto)}\`, \`body=\${encodeURIComponent(corpo)}\`];
+  if (cc) par.push(\`cc=\${encodeURIComponent(cc)}\`);
   link += '?' + par.join('&');
   window.location.href = link;
 
@@ -852,7 +726,7 @@ function renderHist() {
   wrap.style.display       = 'block';
 
   // Lê filtros
-  const estabSel = cdFiltroAtivo;
+  const estabSel = document.getElementById('f-estab-hist').value;
   const de       = document.getElementById('f-de').value;
   const ate      = document.getElementById('f-ate').value;
   const busca    = document.getElementById('f-busca').value.trim().toLowerCase();
@@ -877,18 +751,18 @@ function renderHist() {
     tbody.innerHTML = lista.map(h => {
       const cc  = getCdCorClass(h.estabelecimento);
       const idx = h._origIdx;   // índice real no array historico
-      return `<tr data-idx="${idx}">
-        <td><input type="checkbox" class="tbl-cb row-cb" data-idx="${idx}" onchange="atualizarBarraSelecao()"></td>
-        <td><span class="cd-pill ${cc}">${h.estabelecimento || '—'}</span></td>
-        <td><span class="mono">${h.pedido}</span></td>
-        <td><span class="mono">${h.nf}</span></td>
-        <td>${h.cliente}</td>
-        <td>${h.vendedor}</td>
-        <td>${h.supervisor}</td>
-        <td>${h.motivo}</td>
-        <td>${h.data}</td>
-        <td><button class="btn-trash" onclick="apagarLinha(${idx})" title="Apagar esta nota">🗑</button></td>
-      </tr>`;
+      return \`<tr data-idx="\${idx}">
+        <td><input type="checkbox" class="tbl-cb row-cb" data-idx="\${idx}" onchange="atualizarBarraSelecao()"></td>
+        <td><span class="cd-pill \${cc}">\${h.estabelecimento || '—'}</span></td>
+        <td><span class="mono">\${h.pedido}</span></td>
+        <td><span class="mono">\${h.nf}</span></td>
+        <td>\${h.cliente}</td>
+        <td>\${h.vendedor}</td>
+        <td>\${h.supervisor}</td>
+        <td>\${h.motivo}</td>
+        <td>\${h.data}</td>
+        <td><button class="btn-trash" onclick="apagarLinha(\${idx})" title="Apagar esta nota">🗑</button></td>
+      </tr>\`;
     }).join('');
     atualizarBarraSelecao();
   }
@@ -942,7 +816,7 @@ function atualizarBarraSelecao() {
 
 // ─── LIMPAR FILTROS ───────────────────────────────────────────────────────
 function limparFiltros() {
-  selecionarCd('');
+  document.getElementById('f-estab-hist').value = '';
   document.getElementById('f-de').value    = '';
   document.getElementById('f-ate').value   = '';
   document.getElementById('f-busca').value = '';
@@ -953,24 +827,24 @@ function limparFiltros() {
 function enviarRelatorio() {
   if (!historico.length) { alert('Nenhuma devolução registrada nesta sessão.'); return; }
   const hoje    = new Date().toLocaleDateString('pt-BR');
-  const assunto = `Relatório de devoluções — ${hoje}`;
+  const assunto = \`Relatório de devoluções — \${hoje}\`;
   const linhas  = historico.map((h, i) =>
-    `${i+1}. [${h.estabelecimento}] Pedido: ${h.pedido} | NF: ${h.nf} | Cliente: ${h.cliente} | Vendedor: ${h.vendedor} | Supervisor: ${h.supervisor} | Motivo: ${h.motivo} | Data: ${h.data}`
-  ).join('\n');
+    \`\${i+1}. [\${h.estabelecimento}] Pedido: \${h.pedido} | NF: \${h.nf} | Cliente: \${h.cliente} | Vendedor: \${h.vendedor} | Supervisor: \${h.supervisor} | Motivo: \${h.motivo} | Data: \${h.data}\`
+  ).join('\\n');
   const corpo =
-`Prezados,
+\`Prezados,
 
 Segue o relatório de notas fiscais recebidas para devolução no CD:
 
-${linhas}
+\${linhas}
 
-Total de notas: ${historico.length}
+Total de notas: \${historico.length}
 
 Atenciosamente,
-Equipe CD / Logística`;
+Equipe CD / Logística\`;
 
   const dest = document.getElementById('rel-dest').value.trim() || 'cadastro@acripel.com.br';
-  window.location.href = `mailto:${encodeURIComponent(dest)}?subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`;
+  window.location.href = \`mailto:\${encodeURIComponent(dest)}?subject=\${encodeURIComponent(assunto)}&body=\${encodeURIComponent(corpo)}\`;
 }
 
 // ─── INIT ─────────────────────────────────────────────────────────────────
