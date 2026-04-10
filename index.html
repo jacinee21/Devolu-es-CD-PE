@@ -3,198 +3,482 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Agente de Devoluções — CD</title>
-<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<title>Devoluções CD — Painel Logístico</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
   :root {
-    --bg: #F5F4F0;
-    --surface: #FFFFFF;
-    --border: #E2E0D8;
-    --border-strong: #C8C5BB;
-    --text: #1A1916;
-    --text-muted: #6B6860;
-    --text-hint: #A8A59E;
-    --accent: #1A4D3A;
-    --accent-light: #E8F2ED;
-    --accent-text: #1A4D3A;
-    --warn: #7A4210;
-    --warn-bg: #FDF3E8;
-    --danger: #8B1A1A;
-    --danger-bg: #FDF0F0;
-    --success: #1A4D3A;
-    --success-bg: #E8F2ED;
-    --radius: 10px;
-    --radius-sm: 6px;
+    --bg:          #0D0F17;
+    --surface:     #151823;
+    --surface2:    #1C2033;
+    --border:      #252A40;
+    --border-glow: rgba(99,102,241,.35);
+    --text:        #E8EAFF;
+    --text-muted:  #8890B8;
+    --text-hint:   #4D5680;
+    --accent:      #6366F1;
+    --accent-h:    #818CF8;
+    --accent-glow: rgba(99,102,241,.18);
+    --accent2:     #F59E0B;
+    --accent2-bg:  rgba(245,158,11,.12);
+    --green:       #10B981;
+    --green-bg:    rgba(16,185,129,.12);
+    --red:         #EF4444;
+    --red-bg:      rgba(239,68,68,.12);
+    --cyan:        #06B6D4;
+    --cyan-bg:     rgba(6,182,212,.12);
+    --purple:      #A855F7;
+    --purple-bg:   rgba(168,85,247,.12);
+    --orange:      #F97316;
+    --orange-bg:   rgba(249,115,22,.12);
+    --blue:        #3B82F6;
+    --blue-bg:     rgba(59,130,246,.12);
+    --radius:      12px;
+    --radius-sm:   8px;
+    --radius-xs:   5px;
+    --shadow:      0 4px 24px rgba(0,0,0,.45);
+    --shadow-sm:   0 2px 8px rgba(0,0,0,.3);
   }
+
   * { box-sizing: border-box; margin: 0; padding: 0; }
+
   body {
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     background: var(--bg);
     color: var(--text);
     font-size: 14px;
     min-height: 100vh;
+    overflow-x: hidden;
   }
+
+  /* BG ambient glow */
+  body::before {
+    content: '';
+    position: fixed;
+    top: -20%;
+    left: -10%;
+    width: 60%;
+    height: 60%;
+    background: radial-gradient(ellipse, rgba(99,102,241,.07) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+  body::after {
+    content: '';
+    position: fixed;
+    bottom: -20%;
+    right: -10%;
+    width: 50%;
+    height: 50%;
+    background: radial-gradient(ellipse, rgba(168,85,247,.06) 0%, transparent 70%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
   .app {
-    max-width: 860px;
+    max-width: 920px;
     margin: 0 auto;
-    padding: 2rem 1.5rem;
+    padding: 2rem 1.5rem 4rem;
+    position: relative;
+    z-index: 1;
   }
+
+  /* ─── HEADER ─── */
   .app-header {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-bottom: 2rem;
+    margin-bottom: 2.5rem;
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid var(--border);
   }
-  .app-title {
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: -0.02em;
-  }
-  .app-sub {
-    font-size: 13px;
-    color: var(--text-muted);
-    margin-top: 2px;
-  }
+
+  .header-left { display: flex; align-items: center; gap: 14px; }
+
   .logo-mark {
-    width: 38px; height: 38px;
-    background: var(--accent);
+    width: 44px; height: 44px;
+    background: linear-gradient(135deg, var(--accent), var(--purple));
     border-radius: var(--radius-sm);
     display: flex; align-items: center; justify-content: center;
     color: #fff;
-    font-size: 16px;
-    font-weight: 500;
-    font-family: 'DM Mono', monospace;
-    letter-spacing: -1px;
+    font-size: 15px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    box-shadow: 0 0 20px rgba(99,102,241,.4);
+    flex-shrink: 0;
   }
 
-  /* TABS */
+  .app-title {
+    font-size: 19px;
+    font-weight: 700;
+    letter-spacing: -.03em;
+    background: linear-gradient(90deg, var(--text), var(--accent-h));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .app-sub {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-top: 2px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  #sheet-status {
+    font-size: 11px;
+    padding: 2px 10px;
+    border-radius: 20px;
+    background: var(--surface2);
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    font-weight: 500;
+    transition: all .3s;
+  }
+  #sheet-status.ok  { background: var(--green-bg); color: var(--green); border-color: rgba(16,185,129,.3); }
+  #sheet-status.err { background: var(--red-bg); color: var(--red); border-color: rgba(239,68,68,.3); }
+
+  /* ─── TABS ─── */
   .tabs {
     display: flex;
-    gap: 2px;
-    background: var(--border);
+    gap: 4px;
+    background: var(--surface);
+    border: 1px solid var(--border);
     border-radius: var(--radius);
-    padding: 3px;
-    margin-bottom: 1.5rem;
+    padding: 4px;
+    margin-bottom: 1.75rem;
     width: fit-content;
+    box-shadow: var(--shadow-sm);
   }
   .tab {
-    padding: 7px 18px;
+    padding: 8px 20px;
     font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     border: none;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
     background: transparent;
     color: var(--text-muted);
-    font-weight: 400;
-    transition: all .15s;
+    font-weight: 500;
+    transition: all .2s;
+    letter-spacing: -.01em;
   }
-  .tab.on { background: var(--surface); color: var(--text); font-weight: 500; }
+  .tab:hover { color: var(--text); background: var(--surface2); }
+  .tab.on {
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(99,102,241,.4);
+  }
   .panel { display: none; }
   .panel.on { display: block; }
 
-  /* CARDS */
+  /* ─── CARDS ─── */
   .card {
     background: var(--surface);
     border: 1px solid var(--border);
     border-radius: var(--radius);
     padding: 1.5rem;
     margin-bottom: 1rem;
+    box-shadow: var(--shadow-sm);
+    transition: box-shadow .2s;
   }
+  .card:hover { box-shadow: 0 4px 32px rgba(0,0,0,.5), 0 0 0 1px rgba(99,102,241,.1); }
+
   .card-title {
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 10px;
+    font-weight: 600;
     color: var(--text-hint);
     text-transform: uppercase;
-    letter-spacing: .08em;
+    letter-spacing: .12em;
     margin-bottom: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .card-title::before {
+    content: '';
+    display: inline-block;
+    width: 3px;
+    height: 12px;
+    background: linear-gradient(to bottom, var(--accent), var(--purple));
+    border-radius: 2px;
   }
 
-  /* FORM */
+  /* ─── FORM ─── */
   .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
   .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 14px; }
-  .field { display: flex; flex-direction: column; gap: 5px; }
-  .field label { font-size: 12px; color: var(--text-muted); font-weight: 400; }
+  .field { display: flex; flex-direction: column; gap: 6px; }
+  .field label {
+    font-size: 11px;
+    color: var(--text-muted);
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+  }
   .field input, .field select, .field textarea {
-    height: 38px;
-    padding: 0 12px;
+    height: 40px;
+    padding: 0 13px;
     font-size: 14px;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
     border: 1px solid var(--border);
     border-radius: var(--radius-sm);
-    background: var(--bg);
+    background: var(--surface2);
     color: var(--text);
     outline: none;
-    transition: border-color .15s;
+    transition: all .2s;
   }
   .field input:focus, .field select:focus, .field textarea:focus {
     border-color: var(--accent);
-    background: var(--surface);
+    background: var(--bg);
+    box-shadow: 0 0 0 3px var(--accent-glow);
   }
   .field input[readonly] {
-    background: var(--border);
+    background: rgba(30,35,60,.6);
     color: var(--text-muted);
     cursor: default;
+    border-color: var(--border);
   }
-  .field textarea { height: auto; padding: 10px 12px; resize: none; }
+  .field textarea { height: auto; padding: 10px 13px; resize: none; }
   .field-full { margin-bottom: 14px; }
 
-  /* BUTTONS */
+  input[type="date"]::-webkit-calendar-picker-indicator {
+    filter: invert(.5) sepia(1) saturate(2) hue-rotate(200deg);
+    cursor: pointer;
+  }
+  select option { background: var(--surface2); }
+
+  /* ─── BUTTONS ─── */
   .btn {
-    height: 38px;
-    padding: 0 18px;
+    height: 40px;
+    padding: 0 20px;
     font-size: 13px;
-    font-family: 'DM Sans', sans-serif;
-    font-weight: 500;
-    border: 1px solid var(--border-strong);
+    font-family: 'Inter', sans-serif;
+    font-weight: 600;
+    border: 1px solid var(--border);
     border-radius: var(--radius-sm);
     cursor: pointer;
-    background: var(--surface);
-    color: var(--text);
-    transition: all .15s;
+    background: var(--surface2);
+    color: var(--text-muted);
+    transition: all .2s;
+    letter-spacing: -.01em;
   }
-  .btn:hover { background: var(--bg); }
+  .btn:hover { background: var(--border); color: var(--text); }
+
   .btn-primary {
-    background: var(--accent);
+    background: linear-gradient(135deg, var(--accent), var(--purple));
     color: #fff;
-    border-color: var(--accent);
+    border: none;
+    box-shadow: 0 2px 14px rgba(99,102,241,.35);
   }
-  .btn-primary:hover { opacity: .88; }
+  .btn-primary:hover { opacity: .88; box-shadow: 0 4px 20px rgba(99,102,241,.5); transform: translateY(-1px); }
+
   .btn-send {
-    background: #fff;
+    background: transparent;
     border: 1.5px solid var(--accent);
-    color: var(--accent);
+    color: var(--accent-h);
     width: 100%;
-    height: 42px;
+    height: 44px;
     font-size: 14px;
     margin-top: 4px;
+    border-radius: var(--radius-sm);
   }
-  .btn-send:hover { background: var(--accent-light); }
-  .btn-sm { height: 30px; padding: 0 12px; font-size: 12px; }
+  .btn-send:hover { background: var(--accent-glow); box-shadow: 0 0 0 3px var(--accent-glow); }
+  .btn-sm { height: 32px; padding: 0 14px; font-size: 12px; }
 
-  /* ALERTS */
+  .btn-ghost {
+    background: transparent;
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 12px;
+    height: 32px;
+    padding: 0 12px;
+  }
+  .btn-ghost:hover { border-color: var(--accent); color: var(--accent-h); }
+
+  /* ─── ALERTS ─── */
   .alert {
     border-radius: var(--radius-sm);
-    padding: 10px 14px;
+    padding: 11px 15px;
     font-size: 13px;
     margin-top: 10px;
     display: none;
     line-height: 1.6;
+    border: 1px solid transparent;
+    animation: fadeSlideIn .2s ease;
   }
-  .alert-success { background: var(--success-bg); color: var(--success); border: 1px solid #B8D9C8; }
-  .alert-danger  { background: var(--danger-bg);  color: var(--danger);  border: 1px solid #F0C0C0; }
-  .alert-warn    { background: var(--warn-bg);    color: var(--warn);    border: 1px solid #F0D0A0; }
+  .alert-success { background: var(--green-bg); color: var(--green); border-color: rgba(16,185,129,.25); }
+  .alert-danger  { background: var(--red-bg); color: var(--red); border-color: rgba(239,68,68,.25); }
+  .alert-warn    { background: var(--accent2-bg); color: var(--accent2); border-color: rgba(245,158,11,.25); }
 
-  /* EMAIL PREVIEW */
+  @keyframes fadeSlideIn {
+    from { opacity: 0; transform: translateY(-6px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ─── TABLE ─── */
+  .tbl-wrap { overflow-x: auto; border-radius: var(--radius-sm); }
+  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
+  .tbl th {
+    text-align: left;
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--text-hint);
+    text-transform: uppercase;
+    letter-spacing: .1em;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    background: var(--surface);
+    position: sticky;
+    top: 0;
+    z-index: 1;
+  }
+  .tbl td {
+    padding: 10px 12px;
+    border-bottom: 1px solid rgba(37,42,64,.8);
+    color: var(--text);
+    vertical-align: middle;
+    transition: background .15s;
+  }
+  .tbl tr:last-child td { border-bottom: none; }
+  .tbl tbody tr:hover td { background: var(--surface2); }
+  .tbl-empty { text-align: center; color: var(--text-hint); padding: 2.5rem !important; font-size: 13px; }
+
+  /* ─── BADGES ─── */
+  .badge {
+    display: inline-flex;
+    align-items: center;
+    font-size: 11px;
+    font-weight: 600;
+    padding: 3px 9px;
+    border-radius: 20px;
+    letter-spacing: .02em;
+    white-space: nowrap;
+  }
+  .badge-indigo { background: var(--accent-glow); color: var(--accent-h); border: 1px solid rgba(99,102,241,.3); }
+  .badge-green  { background: var(--green-bg); color: var(--green); border: 1px solid rgba(16,185,129,.25); }
+  .badge-amber  { background: var(--accent2-bg); color: var(--accent2); border: 1px solid rgba(245,158,11,.25); }
+  .badge-cyan   { background: var(--cyan-bg); color: var(--cyan); border: 1px solid rgba(6,182,212,.25); }
+  .badge-purple { background: var(--purple-bg); color: var(--purple); border: 1px solid rgba(168,85,247,.25); }
+  .badge-orange { background: var(--orange-bg); color: var(--orange); border: 1px solid rgba(249,115,22,.25); }
+  .badge-blue   { background: var(--blue-bg); color: var(--blue); border: 1px solid rgba(59,130,246,.25); }
+  .badge-red    { background: var(--red-bg); color: var(--red); border: 1px solid rgba(239,68,68,.25); }
+
+  /* ─── CD CHIPS (filter) ─── */
+  .chips-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1rem;
+  }
+  .chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 5px 13px;
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    border: 1px solid var(--border);
+    background: var(--surface2);
+    color: var(--text-muted);
+    transition: all .2s;
+    user-select: none;
+  }
+  .chip:hover { border-color: var(--accent); color: var(--accent-h); background: var(--accent-glow); }
+  .chip.active {
+    background: linear-gradient(135deg, var(--accent), var(--purple));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: 0 2px 12px rgba(99,102,241,.4);
+  }
+  .chip-dot {
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    opacity: .7;
+  }
+  .chip-count {
+    background: rgba(255,255,255,.15);
+    border-radius: 10px;
+    padding: 0 6px;
+    font-size: 10px;
+    min-width: 18px;
+    text-align: center;
+  }
+
+  /* ─── FILTER ROW ─── */
+  .filter-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: flex-end;
+    margin-bottom: 1rem;
+    padding: 1rem 1.25rem;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+  }
+  .filter-row .field { margin-bottom: 0; min-width: 140px; }
+  .filter-row .field input { height: 36px; font-size: 13px; }
+  .filter-row label { font-size: 10px; }
+
+  /* ─── SUMMARY STATS ─── */
+  .stats-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .stat-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 12px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: all .2s;
+  }
+  .stat-card:hover { border-color: var(--accent); box-shadow: 0 0 0 1px var(--border-glow); }
+  .stat-label { font-size: 10px; color: var(--text-hint); text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
+  .stat-val {
+    font-size: 22px;
+    font-weight: 700;
+    font-family: 'JetBrains Mono', monospace;
+    background: linear-gradient(90deg, var(--text), var(--accent-h));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .stat-sub { font-size: 11px; color: var(--text-muted); }
+
+  /* ─── META INFO ─── */
+  .info-row {
+    display: flex; gap: 6px; align-items: baseline; margin-bottom: 6px;
+  }
+  .info-label { font-size: 11px; color: var(--text-hint); min-width: 72px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; }
+  .info-val { font-size: 14px; color: var(--text); font-weight: 500; }
+  .nota-display {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 22px;
+    font-weight: 700;
+    color: var(--accent-h);
+    letter-spacing: .06em;
+  }
+
+  /* ─── EMAIL PREVIEW ─── */
   .email-preview {
     border: 1px solid var(--border);
     border-radius: var(--radius);
     overflow: hidden;
     margin-top: 1rem;
     display: none;
+    animation: fadeSlideIn .2s ease;
   }
   .email-header {
-    background: var(--bg);
+    background: var(--surface2);
     padding: 14px 16px;
     border-bottom: 1px solid var(--border);
   }
@@ -202,86 +486,107 @@
     display: flex; gap: 8px; margin-bottom: 5px; font-size: 13px;
   }
   .email-row:last-child { margin-bottom: 0; }
-  .email-lbl { color: var(--text-hint); min-width: 56px; font-size: 12px; }
+  .email-lbl { color: var(--text-hint); min-width: 56px; font-size: 11px; font-weight: 600; text-transform: uppercase; }
   .email-val { color: var(--text); }
   .email-body {
     padding: 16px;
     font-size: 13px;
     line-height: 1.85;
-    color: var(--text);
+    color: var(--text-muted);
     white-space: pre-wrap;
-    font-family: 'DM Sans', sans-serif;
+    font-family: 'Inter', sans-serif;
   }
 
-  /* TABLE */
-  .tbl { width: 100%; border-collapse: collapse; font-size: 13px; }
-  .tbl th {
-    text-align: left;
-    font-size: 11px;
-    font-weight: 500;
-    color: var(--text-hint);
-    text-transform: uppercase;
-    letter-spacing: .06em;
-    padding: 7px 10px;
-    border-bottom: 1px solid var(--border);
-  }
-  .tbl td {
-    padding: 9px 10px;
-    border-bottom: 1px solid var(--border);
-    color: var(--text);
-  }
-  .tbl tr:last-child td { border-bottom: none; }
-  .tbl tbody tr:hover td { background: var(--bg); }
-  .tbl-empty { text-align: center; color: var(--text-hint); padding: 1.5rem !important; }
-
-  /* BADGE */
-  .badge {
-    display: inline-block;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 3px 8px;
-    border-radius: 4px;
-  }
-  .badge-ok   { background: var(--success-bg); color: var(--success); }
-  .badge-pend { background: #EEF2FF; color: #3730A3; }
-  .badge-neu  { background: var(--bg); color: var(--text-muted); border: 1px solid var(--border); }
-
-  .sep { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .sep { border: none; border-top: 1px solid var(--border); margin: 18px 0; }
 
   .hint { font-size: 12px; color: var(--text-hint); margin-top: 5px; }
-  .nota-display {
-    font-family: 'DM Mono', monospace;
-    font-size: 22px;
-    font-weight: 500;
-    color: var(--accent);
-    letter-spacing: .05em;
-  }
-  .info-row {
-    display: flex; gap: 6px; align-items: baseline; margin-bottom: 6px;
-  }
-  .info-label { font-size: 11px; color: var(--text-hint); min-width: 64px; }
-  .info-val { font-size: 14px; color: var(--text); font-weight: 500; }
 
-  @media (max-width: 600px) {
+  /* ─── EMPTY STATE ─── */
+  .empty-state {
+    text-align: center;
+    padding: 3rem 1rem;
+    color: var(--text-hint);
+  }
+  .empty-state .empty-icon { font-size: 36px; margin-bottom: 12px; opacity: .5; }
+  .empty-state p { font-size: 13px; line-height: 1.6; }
+
+  /* ─── RESPONSIVE ─── */
+  @media (max-width: 640px) {
     .grid2, .grid3 { grid-template-columns: 1fr; }
-    .app { padding: 1rem; }
+    .app { padding: 1rem 1rem 3rem; }
+    .app-title { font-size: 16px; }
+    .filter-row { flex-direction: column; }
+    .filter-row .field { min-width: unset; width: 100%; }
+    .stats-row { grid-template-columns: 1fr 1fr; }
+  }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; height: 6px; }
+  ::-webkit-scrollbar-track { background: var(--surface); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+  ::-webkit-scrollbar-thumb:hover { background: var(--accent); }
+
+  /* mono numbers in table */
+  .mono { font-family: 'JetBrains Mono', monospace; font-size: 12px; }
+
+  /* cd pill colors cycle */
+  .cd-color-0 { --cc: var(--accent); --cc-bg: var(--accent-glow); --cc-border: rgba(99,102,241,.3); }
+  .cd-color-1 { --cc: var(--cyan); --cc-bg: var(--cyan-bg); --cc-border: rgba(6,182,212,.3); }
+  .cd-color-2 { --cc: var(--green); --cc-bg: var(--green-bg); --cc-border: rgba(16,185,129,.3); }
+  .cd-color-3 { --cc: var(--purple); --cc-bg: var(--purple-bg); --cc-border: rgba(168,85,247,.3); }
+  .cd-color-4 { --cc: var(--orange); --cc-bg: var(--orange-bg); --cc-border: rgba(249,115,22,.3); }
+  .cd-color-5 { --cc: var(--blue); --cc-bg: var(--blue-bg); --cc-border: rgba(59,130,246,.3); }
+  .cd-color-6 { --cc: var(--accent2); --cc-bg: var(--accent2-bg); --cc-border: rgba(245,158,11,.3); }
+  .cd-color-7 { --cc: var(--red); --cc-bg: var(--red-bg); --cc-border: rgba(239,68,68,.3); }
+
+  .cd-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 2px 9px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 600;
+    background: var(--cc-bg);
+    color: var(--cc);
+    border: 1px solid var(--cc-border);
+  }
+
+  /* loading spinner */
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .spinner {
+    display: inline-block;
+    width: 12px; height: 12px;
+    border: 2px solid var(--border);
+    border-top-color: var(--accent);
+    border-radius: 50%;
+    animation: spin .7s linear infinite;
+    vertical-align: middle;
+    margin-right: 6px;
   }
 </style>
 </head>
 <body>
 <div class="app">
 
+  <!-- HEADER -->
   <div class="app-header">
-    <div>
-      <div class="app-title">Devoluções CD</div>
-      <div class="app-sub">Registro e notificação de notas devolvidas &nbsp;<span id="sheet-status" style="font-size:11px;padding:2px 8px;border-radius:4px;background:#E8F2ED;color:#1A4D3A">conectando...</span></div>
+    <div class="header-left">
+      <div class="logo-mark">CD</div>
+      <div>
+        <div class="app-title">Devoluções CD</div>
+        <div class="app-sub">
+          Painel logístico de notificações &nbsp;
+          <span id="sheet-status">conectando...</span>
+        </div>
+      </div>
     </div>
-    <div class="logo-mark">CD</div>
   </div>
 
+  <!-- TABS -->
   <div class="tabs">
     <button class="tab on" onclick="goTab('registrar', this)">Registrar devolução</button>
-    <button class="tab" onclick="goTab('historico', this)">Histórico</button>
+    <button class="tab"    onclick="goTab('historico', this)">Histórico</button>
   </div>
 
   <!-- ===== REGISTRAR ===== -->
@@ -291,7 +596,7 @@
 
       <div class="grid3">
         <div class="field">
-          <label>Nº do pedido</label>
+          <label>Nº do Pedido</label>
           <input type="text" id="r-pedido" placeholder="Ex: 13229493" oninput="buscarNota()" onkeydown="if(event.key==='Enter')_buscar()" autocomplete="off">
         </div>
         <div class="field">
@@ -304,14 +609,17 @@
         </div>
       </div>
       <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="_buscar()">Buscar na planilha</button>
-      <div id="r-loading" class="alert alert-warn" style="display:none">Buscando na planilha...</div>
-
-      <div id="r-found" class="alert alert-success"></div>
-      <div id="r-nfound" class="alert alert-danger">Pedido/NF não encontrado na planilha. Verifique o número digitado.</div>
+      <div id="r-loading" class="alert alert-warn" style="display:none"><span class="spinner"></span>Buscando na planilha...</div>
+      <div id="r-found"   class="alert alert-success"></div>
+      <div id="r-nfound"  class="alert alert-danger">Pedido/NF não encontrado na planilha. Verifique o número digitado.</div>
 
       <div id="r-extra" style="display:none">
         <div class="sep"></div>
         <div class="grid3">
+          <div class="field">
+            <label>Estabelecimento (CD)</label>
+            <input type="text" id="r-estab" readonly>
+          </div>
           <div class="field">
             <label>Cliente</label>
             <input type="text" id="r-cli" readonly>
@@ -320,19 +628,17 @@
             <label>Vendedor</label>
             <input type="text" id="r-vend" readonly>
           </div>
+        </div>
+        <div class="grid2">
           <div class="field">
             <label>Supervisor</label>
             <input type="text" id="r-sup" readonly>
           </div>
-        </div>
-
-        <div class="field-full">
           <div class="field">
             <label>Motivo da devolução</label>
             <input type="text" id="r-motivo" placeholder="Descreva o motivo da devolução">
           </div>
         </div>
-
         <div class="field-full">
           <div class="field">
             <label>Observação adicional (opcional)</label>
@@ -340,28 +646,97 @@
           </div>
         </div>
 
-        <button class="btn btn-primary" style="width:100%;margin-top:4px" onclick="gerarEAbrir()">Enviar e-mail ao vendedor e supervisor</button>
+        <button class="btn btn-primary" style="width:100%;margin-top:4px;height:44px;font-size:14px" onclick="gerarEAbrir()">
+          ✉ Enviar e-mail ao vendedor e supervisor
+        </button>
       </div>
     </div>
-
-
   </div>
 
   <!-- ===== HISTÓRICO ===== -->
   <div id="p-historico" class="panel">
-    <div class="card">
-      <div class="card-title">devoluções registradas nesta sessão</div>
-      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1rem">
-        <div class="field" style="flex:1;margin-bottom:0">
-          <label>Enviar relatório para</label>
-          <input type="email" id="rel-dest" value="cadastro@acripel.com.br" placeholder="email@empresa.com.br">
-        </div>
-        <button class="btn btn-primary" style="height:38px;white-space:nowrap" onclick="enviarRelatorio()">Enviar relatório semanal</button>
+
+    <!-- Stats -->
+    <div class="stats-row" id="stats-row" style="display:none">
+      <div class="stat-card">
+        <div class="stat-label">Total registrado</div>
+        <div class="stat-val" id="stat-total">0</div>
+        <div class="stat-sub">nesta sessão</div>
       </div>
-      <table class="tbl">
-        <thead><tr><th>Pedido</th><th>NF</th><th>Cliente</th><th>Vendedor</th><th>Supervisor</th><th>Motivo</th><th>Data</th></tr></thead>
-        <tbody id="hist-tbody"></tbody>
-      </table>
+      <div class="stat-card">
+        <div class="stat-label">Filtrado</div>
+        <div class="stat-val" id="stat-filtrado">0</div>
+        <div class="stat-sub">registros visíveis</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-label">Estabelecimentos</div>
+        <div class="stat-val" id="stat-cds">0</div>
+        <div class="stat-sub">CDs distintos</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-title">filtros</div>
+
+      <!-- CD chips -->
+      <div id="cd-chips-label" style="font-size:11px;color:var(--text-muted);margin-bottom:6px;display:none">Filtrar por Estabelecimento (CD):</div>
+      <div class="chips-row" id="cd-chips"></div>
+
+      <!-- Date filter -->
+      <div class="filter-row" id="filter-row">
+        <div class="field">
+          <label>Data de chegada — De</label>
+          <input type="date" id="f-de">
+        </div>
+        <div class="field">
+          <label>Até</label>
+          <input type="date" id="f-ate">
+        </div>
+        <div class="field" style="min-width:unset;flex:1">
+          <label>Buscar texto</label>
+          <input type="text" id="f-busca" placeholder="Pedido, NF, cliente, vendedor...">
+        </div>
+        <button class="btn btn-ghost" onclick="limparFiltros()">✕ Limpar filtros</button>
+      </div>
+    </div>
+
+    <div class="card">
+      <div style="display:flex;gap:10px;align-items:flex-end;margin-bottom:1.25rem;flex-wrap:wrap">
+        <div class="card-title" style="margin-bottom:0;flex:1">devoluções registradas nesta sessão</div>
+        <div class="field" style="margin-bottom:0;min-width:200px">
+          <label>Enviar relatório para</label>
+          <input type="email" id="rel-dest" value="cadastro@acripel.com.br" style="height:36px;font-size:13px">
+        </div>
+        <button class="btn btn-primary btn-sm" style="height:36px;white-space:nowrap" onclick="enviarRelatorio()">Enviar relatório</button>
+      </div>
+
+      <div id="hist-empty" class="empty-state">
+        <div class="empty-icon">📋</div>
+        <p>Nenhuma devolução registrada nesta sessão.<br>Registre uma devolução na aba ao lado para ela aparecer aqui.</p>
+      </div>
+
+      <div id="hist-table-wrap" style="display:none">
+        <div class="tbl-wrap">
+          <table class="tbl">
+            <thead>
+              <tr>
+                <th>Estabelecimento</th>
+                <th>Pedido</th>
+                <th>NF</th>
+                <th>Cliente</th>
+                <th>Vendedor</th>
+                <th>Supervisor</th>
+                <th>Motivo</th>
+                <th>Data chegada</th>
+              </tr>
+            </thead>
+            <tbody id="hist-tbody"></tbody>
+          </table>
+        </div>
+        <div id="hist-no-filter" class="alert alert-warn" style="margin-top:.75rem;display:none">
+          Nenhum resultado com os filtros aplicados. <button class="btn btn-ghost btn-sm" onclick="limparFiltros()" style="margin-left:8px">Limpar filtros</button>
+        </div>
+      </div>
     </div>
 
   </div>
@@ -369,53 +744,67 @@
 </div>
 
 <script>
+// ─── CONFIG ───────────────────────────────────────────────────────────────
 const SHEET_URL = "https://script.google.com/macros/s/AKfycbxoUCy8Ovq1Fo8ESVzK7gTqsaF7q2pnJzlQDVwXyf_rG9aGSnyhodUgkhLtofXGnm_x/exec";
 
-let dadosSheet = [];
-let historico = [];
-let buscaTimeout = null;
+// Coluna A = estabelecimento (r[0])
+// Coluna B = pedido         (r[1])
+// Coluna C = nf             (r[2])
+// Coluna D = cliente        (r[3])
+// Coluna E = vendedor       (r[4])
+// Coluna F = supervisor     (r[5])
+// Coluna G = emailVend      (r[6])
+// Coluna H = emailSup       (r[7])
 
-// Carrega planilha ao iniciar
+let dadosSheet  = [];
+let historico   = [];
+let cdFiltroAtivo = null;    // estabelecimento selecionado
+let buscaTimeout  = null;
+const cdCores = {};          // mapa cd -> índice de cor
+
+// ─── PLANILHA ─────────────────────────────────────────────────────────────
 async function carregarPlanilha() {
   const status = document.getElementById('sheet-status');
+  status.textContent = 'conectando...';
+  status.className = '';
   try {
     const resp = await fetch(SHEET_URL);
-    if (!resp.ok) throw new Error('Erro ao buscar planilha');
+    if (!resp.ok) throw new Error('HTTP ' + resp.status);
     const rows = await resp.json();
     dadosSheet = [];
     for (let i = 1; i < rows.length; i++) {
       const r = rows[i];
-      if (!r[0] && !r[1]) continue;
+      if (!r[1] && !r[2]) continue;  // sem pedido e sem NF → pula
       dadosSheet.push({
-        pedido:     String(r[0] || '').trim(),
-        nf:         String(r[1] || '').trim(),
-        cliente:    String(r[2] || '').trim(),
-        vendedor:   String(r[3] || '').trim(),
-        supervisor: String(r[4] || '').trim(),
-        emailVend:  String(r[5] || '').trim(),
-        emailSup:   String(r[6] || '').trim()
+        estabelecimento: String(r[0] || '').trim(),
+        pedido:          String(r[1] || '').trim(),
+        nf:              String(r[2] || '').trim(),
+        cliente:         String(r[3] || '').trim(),
+        vendedor:        String(r[4] || '').trim(),
+        supervisor:      String(r[5] || '').trim(),
+        emailVend:       String(r[6] || '').trim(),
+        emailSup:        String(r[7] || '').trim()
       });
     }
-    status.textContent = dadosSheet.length + ' registros carregados';
-    status.style.background = '#E8F2ED';
-    status.style.color = '#1A4D3A';
+    status.textContent = dadosSheet.length + ' registros';
+    status.className = 'ok';
   } catch(e) {
-    status.textContent = 'erro ao conectar planilha';
-    status.style.background = '#FDF0F0';
-    status.style.color = '#8B1A1A';
+    console.error(e);
+    status.textContent = 'erro ao conectar';
+    status.className = 'err';
   }
 }
 
-// Tabs
+// ─── TABS ─────────────────────────────────────────────────────────────────
 function goTab(name, el) {
-  document.querySelectorAll('.tab').forEach(t => t.classList.remove('on'));
+  document.querySelectorAll('.tab').forEach(t  => t.classList.remove('on'));
   document.querySelectorAll('.panel').forEach(p => p.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('p-' + name).classList.add('on');
   if (name === 'historico') renderHist();
 }
 
-// Busca nota com debounce
+// ─── BUSCA ────────────────────────────────────────────────────────────────
 function buscarNota() {
   clearTimeout(buscaTimeout);
   buscaTimeout = setTimeout(_buscar, 300);
@@ -437,8 +826,7 @@ function _buscar() {
 
   if (!dadosSheet.length) {
     loading.style.display = 'block';
-    loading.textContent = 'Carregando planilha, aguarde...';
-    carregarPlanilha().then(_buscar);
+    carregarPlanilha().then(() => { loading.style.display = 'none'; _buscar(); });
     return;
   }
   loading.style.display = 'none';
@@ -451,9 +839,11 @@ function _buscar() {
 
   if (registro) {
     found.style.display = 'block';
-    found.innerHTML = `<strong>Registro encontrado</strong> — Pedido: ${norm(registro.pedido)} | NF: ${norm(registro.nf)} | Cliente: ${registro.cliente}`;
+    const cdCorClass = getCdCorClass(registro.estabelecimento);
+    found.innerHTML = `<strong>Registro encontrado</strong> — <span class="cd-pill ${cdCorClass}">${registro.estabelecimento || 'CD'}</span> &nbsp;Pedido: ${norm(registro.pedido)} | NF: ${norm(registro.nf)} | ${registro.cliente}`;
     document.getElementById('r-pedido').value = norm(registro.pedido);
     document.getElementById('r-nota').value   = norm(registro.nf);
+    document.getElementById('r-estab').value  = registro.estabelecimento;
     document.getElementById('r-cli').value    = registro.cliente;
     document.getElementById('r-vend').value   = registro.vendedor;
     document.getElementById('r-sup').value    = registro.supervisor;
@@ -464,33 +854,33 @@ function _buscar() {
   }
 }
 
-// Gera e abre e-mail
+// ─── E-MAIL ───────────────────────────────────────────────────────────────
 function gerarEAbrir() {
-  const extra = document.getElementById('r-extra');
+  const extra    = document.getElementById('r-extra');
   const registro = extra._registro;
   if (!registro) return;
 
   const motivo = document.getElementById('r-motivo').value.trim();
   if (!motivo) { alert('Informe o motivo da devolução.'); return; }
 
-  const data   = document.getElementById('r-data').value;
-  const obs    = document.getElementById('r-obs').value.trim();
-  const dest   = registro.emailVend;
-  const cc     = registro.emailSup;
+  const data    = document.getElementById('r-data').value;
+  const obs     = document.getElementById('r-obs').value.trim();
+  const dest    = registro.emailVend;
+  const cc      = registro.emailSup;
 
   if (!dest) { alert('E-mail do vendedor não encontrado na planilha.'); return; }
 
-  const nome1  = registro.vendedor.split(' ')[0];
+  const nome1   = registro.vendedor.split(' ')[0];
   const dataFmt = data
     ? new Date(data + 'T12:00').toLocaleDateString('pt-BR')
     : new Date().toLocaleDateString('pt-BR');
+  const dataISO = data || new Date().toISOString().split('T')[0];
 
   const assunto = `Devolução recebida no CD — Pedido ${registro.pedido} / NF ${registro.nf} / ${registro.cliente}`;
-
   const corpo =
 `Olá, ${nome1}!
 
-Informamos que a nota fiscal Nº ${registro.nf} referente ao Pedido ${registro.pedido}, cliente ${registro.cliente}, chegou ao nosso Centro de Distribuição em ${dataFmt}.
+Informamos que a nota fiscal Nº ${registro.nf} referente ao Pedido ${registro.pedido}, cliente ${registro.cliente}, chegou ao nosso Centro de Distribuição (${registro.estabelecimento}) em ${dataFmt}.
 
 Motivo da devolução: ${motivo}.
 ${obs ? '\nObservação: ' + obs + '\n' : ''}
@@ -501,62 +891,174 @@ Em caso de dúvidas, entre em contato com a equipe do CD.
 Atenciosamente,
 Equipe CD / Logística`;
 
-  let link = `mailto:${encodeURIComponent(dest)}`;
-  const params = [`subject=${encodeURIComponent(assunto)}`, `body=${encodeURIComponent(corpo)}`];
-  if (cc) params.push(`cc=${encodeURIComponent(cc)}`);
-  link += '?' + params.join('&');
+  let link  = `mailto:${encodeURIComponent(dest)}`;
+  const par = [`subject=${encodeURIComponent(assunto)}`, `body=${encodeURIComponent(corpo)}`];
+  if (cc) par.push(`cc=${encodeURIComponent(cc)}`);
+  link += '?' + par.join('&');
   window.location.href = link;
 
   historico.push({
-    pedido: registro.pedido,
-    nf: registro.nf,
-    cliente: registro.cliente,
-    vendedor: registro.vendedor,
-    supervisor: registro.supervisor,
+    estabelecimento: registro.estabelecimento,
+    pedido:          registro.pedido,
+    nf:              registro.nf,
+    cliente:         registro.cliente,
+    vendedor:        registro.vendedor,
+    supervisor:      registro.supervisor,
     motivo,
-    data: dataFmt
+    data:            dataFmt,
+    dataISO
   });
+
   renderHist();
 }
 
-// Histórico
-function renderHist() {
-  const tbody = document.getElementById('hist-tbody');
-  if (!historico.length) {
-    tbody.innerHTML = '<tr><td colspan="7" class="tbl-empty">Nenhum registro ainda</td></tr>';
-    return;
+// ─── COR POR CD ───────────────────────────────────────────────────────────
+const CD_CORES_TOTAL = 8;
+let cdCorIndex = 0;
+function getCdCorClass(cd) {
+  if (!cd) return 'cd-color-0';
+  if (cdCores[cd] === undefined) {
+    cdCores[cd] = cdCorIndex % CD_CORES_TOTAL;
+    cdCorIndex++;
   }
-  tbody.innerHTML = [...historico].reverse().map(h =>
-    `<tr>
-      <td><span style="font-family:'DM Mono',monospace">${h.pedido}</span></td>
-      <td><span style="font-family:'DM Mono',monospace">${h.nf}</span></td>
-      <td>${h.cliente}</td>
-      <td>${h.vendedor}</td>
-      <td>${h.supervisor}</td>
-      <td>${h.motivo}</td>
-      <td>${h.data}</td>
-    </tr>`
-  ).join('');
+  return 'cd-color-' + cdCores[cd];
 }
 
-// Relatório semanal
+// ─── HISTÓRICO ────────────────────────────────────────────────────────────
+function renderHist() {
+  const tbody      = document.getElementById('hist-tbody');
+  const wrap       = document.getElementById('hist-table-wrap');
+  const emptyState = document.getElementById('hist-empty');
+  const statsRow   = document.getElementById('stats-row');
+  const noFilter   = document.getElementById('hist-no-filter');
+
+  // stats globais
+  const cdsUnicos = [...new Set(historico.map(h => h.estabelecimento).filter(Boolean))];
+  document.getElementById('stat-total').textContent = historico.length;
+  document.getElementById('stat-cds').textContent   = cdsUnicos.length;
+
+  if (!historico.length) {
+    wrap.style.display      = 'none';
+    emptyState.style.display = 'block';
+    statsRow.style.display   = 'none';
+    renderChips([]);
+    return;
+  }
+
+  statsRow.style.display   = 'grid';
+  emptyState.style.display = 'none';
+  wrap.style.display       = 'block';
+
+  renderChips(cdsUnicos);
+
+  // Aplicar filtros
+  const de    = document.getElementById('f-de').value;
+  const ate   = document.getElementById('f-ate').value;
+  const busca = document.getElementById('f-busca').value.trim().toLowerCase();
+
+  let lista = [...historico].reverse();
+
+  if (cdFiltroAtivo) {
+    lista = lista.filter(h => h.estabelecimento === cdFiltroAtivo);
+  }
+  if (de) {
+    lista = lista.filter(h => h.dataISO >= de);
+  }
+  if (ate) {
+    lista = lista.filter(h => h.dataISO <= ate);
+  }
+  if (busca) {
+    lista = lista.filter(h =>
+      [h.pedido, h.nf, h.cliente, h.vendedor, h.supervisor, h.motivo, h.estabelecimento]
+        .some(v => (v || '').toLowerCase().includes(busca))
+    );
+  }
+
+  document.getElementById('stat-filtrado').textContent = lista.length;
+
+  if (!lista.length) {
+    tbody.innerHTML       = '';
+    noFilter.style.display = 'block';
+  } else {
+    noFilter.style.display = 'none';
+    tbody.innerHTML = lista.map(h => {
+      const cdClass = getCdCorClass(h.estabelecimento);
+      return `<tr>
+        <td><span class="cd-pill ${cdClass}">${h.estabelecimento || '—'}</span></td>
+        <td><span class="mono">${h.pedido}</span></td>
+        <td><span class="mono">${h.nf}</span></td>
+        <td>${h.cliente}</td>
+        <td>${h.vendedor}</td>
+        <td>${h.supervisor}</td>
+        <td>${h.motivo}</td>
+        <td>${h.data}</td>
+      </tr>`;
+    }).join('');
+  }
+}
+
+// ─── CHIPS ────────────────────────────────────────────────────────────────
+function renderChips(cds) {
+  const container = document.getElementById('cd-chips');
+  const label     = document.getElementById('cd-chips-label');
+
+  if (!cds.length) {
+    container.innerHTML = '';
+    label.style.display = 'none';
+    return;
+  }
+
+  label.style.display = 'block';
+
+  container.innerHTML = cds.map(cd => {
+    const corClass = getCdCorClass(cd);
+    const count    = historico.filter(h => h.estabelecimento === cd).length;
+    const isActive = cdFiltroAtivo === cd;
+    return `<button class="chip ${isActive ? 'active' : ''}" onclick="toggleChip('${cd.replace(/'/g, "\\'")}')">
+      <span class="chip-dot"></span>
+      ${cd}
+      <span class="chip-count">${count}</span>
+    </button>`;
+  }).join('');
+}
+
+function toggleChip(cd) {
+  cdFiltroAtivo = cdFiltroAtivo === cd ? null : cd;
+  renderHist();
+}
+
+// ─── FILTROS ──────────────────────────────────────────────────────────────
+function limparFiltros() {
+  document.getElementById('f-de').value    = '';
+  document.getElementById('f-ate').value   = '';
+  document.getElementById('f-busca').value = '';
+  cdFiltroAtivo = null;
+  renderHist();
+}
+
+// auto-atualiza ao mudar filtros
+['f-de', 'f-ate', 'f-busca'].forEach(id => {
+  document.getElementById(id).addEventListener('input', renderHist);
+});
+
+// ─── RELATÓRIO ────────────────────────────────────────────────────────────
 function enviarRelatorio() {
   if (!historico.length) {
     alert('Nenhuma devolução registrada nesta sessão para enviar.');
     return;
   }
 
-  const hoje = new Date().toLocaleDateString('pt-BR');
-  const assunto = `Relatório semanal de devoluções — ${hoje}`;
+  const hoje    = new Date().toLocaleDateString('pt-BR');
+  const assunto = `Relatório de devoluções — ${hoje}`;
 
   const linhas = historico.map((h, i) =>
-    `${i+1}. Pedido: ${h.pedido} | NF: ${h.nf} | Cliente: ${h.cliente} | Vendedor: ${h.vendedor} | Supervisor: ${h.supervisor} | Motivo: ${h.motivo} | Data: ${h.data}`
+    `${i+1}. [${h.estabelecimento}] Pedido: ${h.pedido} | NF: ${h.nf} | Cliente: ${h.cliente} | Vendedor: ${h.vendedor} | Supervisor: ${h.supervisor} | Motivo: ${h.motivo} | Data: ${h.data}`
   ).join('\n');
 
   const corpo =
 `Prezados,
 
-Segue abaixo o relatório de notas fiscais recebidas para devolução no CD:
+Segue o relatório de notas fiscais recebidas para devolução no CD:
 
 ${linhas}
 
@@ -570,7 +1072,7 @@ Equipe CD / Logística`;
   window.location.href = link;
 }
 
-// Init
+// ─── INIT ─────────────────────────────────────────────────────────────────
 document.getElementById('r-data').value = new Date().toISOString().split('T')[0];
 carregarPlanilha();
 renderHist();
